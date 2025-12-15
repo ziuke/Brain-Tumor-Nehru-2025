@@ -1,0 +1,132 @@
+{% include 'header.html' %}
+<!-- //header -->
+<!--/w3l-banner-content-->
+<div class="banner-w3l-main">
+  <div class="w3l-banner-content">
+    <div class="container">
+      <div class="bannerhny-info text-center">
+        <h6 class="title-subhny mb-2">BrainTumour Hub</h6>
+        <h3 class="">Trusted Information & Support for Brain Tumour Patients</h3>
+        
+      </div>
+    </div>
+  </div>
+  <!-- home page block1 -->
+  <section class="home-services pt-lg-0">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="box-wrap">
+            <div class="box-wrap-grid">
+              <div class="icon">
+                <span class="fas fa-brain fa-2x text-info py-3"></span>
+              </div>
+              <div class="info">
+                <p></p>
+                <h4><a href="javascript:void(0)" class="toggle-paragraph">AI-Enhanced MRI Review</a></h4>
+              </div>
+            </div>
+            <p class="mt-3 paragraph-to-toggle" style="display: none;">Machine-learning algorithms assist neuroradiologists in detecting & classifying brain tumours earlier and more accurately.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12 mt-md-0 mt-4">
+          <div class="box-wrap">
+            <div class="box-wrap-grid">
+              <div class="icon">
+                <span class="fas fa-user-md fa-2x text-info py-3"></span>
+              </div>
+              <div class="info">
+                <p></p>
+                <h4><a href="javascript:void(0)" class="toggle-paragraph">Neuro-Oncology Consult</a></h4>
+              </div>
+            </div>
+            <p class="mt-3 paragraph-to-toggle" style="display: none;">Book video or in-person appointments with certified neuro-surgeons & oncologists specialised in brain tumours.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-12 mt-lg-0 mt-4">
+          <div class="box-wrap">
+            <div class="box-wrap-grid">
+              <div class="icon">
+                <span class="fas fa-map-marker-alt fa-2x text-info py-3"></span>
+              </div>
+              <div class="info">
+                <p></p>
+                <h4><a href="javascript:void(0)" class="toggle-paragraph">Centres of Excellence</a></h4>
+              </div>
+            </div>
+            <p class="mt-3 paragraph-to-toggle" style="display: none;">Locate nearby brain-tumour treatment centres, support groups & rehabilitation facilities in seconds.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="position-relative">
+  <div class="shape overflow-hidden">
+    <svg viewBox="0 0 2880 48" fill="none" xmlns="http://www.w3.org/2000/svg ">
+      <path d="M0 48H1437.5H2880V0H2160C1442.5 52 720 0 720 0H0V48Z" fill="currentColor"></path>
+    </svg>
+  </div>
+</div>
+
+<div class="w3l-content-1 py-5">
+  <div class="container py-lg-5 py-md-4 py-2">
+    <div class="row w3l-content-inf mt-lg-5 pt-lg-5">
+      <div class="col-lg-5 w3l-content-left mt-lg-4">
+        <h6 class="title-subhny mb-2">About BrainTumour Hub</h6>
+        <h3 class="title-w3l mb-4">Empowering Patients & Caregivers</h3>
+      </div>
+      <div class="col-lg-7 w3l-content-right pl-lg-5 mt-lg-4">
+        <p class="para-sub pr-lg-5 mt-md-4 mt-3 mx-auto">From first symptoms through survivorship, our platform connects you with evidence-based brain-tumour information, expert opinions and peer support.</p>
+        <p class="para-sub pr-lg-5 mt-md-4 mt-3 mx-auto">Explore treatment pathways, clinical-trial matching, mental-health resources and location-based services—all in one secure place.</p>
+        <a class="btn btn-style btn-outline-light mt-sm-5 mt-4 mr-2" href="/about">
+          Discover More</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="w3l-stats py-lg-0 py-5" id="stats">
+  <div class="gallery-inner container py-lg-0 py-3">
+    <div class="row stats-con">
+      <div class="col-lg-3 col-6 stats_info counter_grid">
+        <!-- <span class="fa fa-brain"></span>
+        <p class="counter">2,300</p>
+        <h4>MRI Cases Analysed</h4> -->
+      </div>
+      <div class="col-lg-3 col-6 stats_info counter_grid1">
+        <!-- <span class="fa fa-microscope"></span>
+        <p class="counter">170</p>
+        <h4>Ongoing Clinical Trials</h4> -->
+      </div>
+      <div class="col-lg-3 col-6 stats_info counter_grid mt-lg-0 mt-5">
+        <!-- <span class="fa fa-hands-helping"></span>
+        <p class="counter">1,850</p>
+        <h4>Support-Group Members</h4> -->
+      </div>
+      <div class="col-lg-3 col-6 stats_info counter_grid2 mt-lg-0 mt-5">
+        <!-- <span class="fa fa-award"></span>
+        <p class="counter">95</p>
+        <h4>Certified Neuro-Centres</h4> -->
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include "footer.html" %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleLinks = document.querySelectorAll('.toggle-paragraph');
+    toggleLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const paragraph = link.closest('.box-wrap').querySelector('.paragraph-to-toggle');
+        if (paragraph.style.display === 'none' || paragraph.style.display === '') {
+          paragraph.style.display = 'block';
+        } else {
+          paragraph.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>

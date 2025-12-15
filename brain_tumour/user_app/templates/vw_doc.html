@@ -1,0 +1,142 @@
+{% load static %}
+{% block content %}
+{% include 'header.html' %}
+<style>
+    .res-card {
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+        margin: 15px;
+        height: 270px;
+        width: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .res-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Customizing the modal backdrop to remove the fading effect */
+    .modal-backdrop {
+        background-color: transparent !important; /* Makes the backdrop invisible */
+    }
+
+    /* Centering the modal with a margin on top */
+    .modal-dialog {
+        margin-top: 100px; /* Adjust this value for desired vertical spacing */
+        max-width: 500px; /* Adjust max width if necessary */
+    }
+</style>
+
+<div class="banner-w3l-main">
+    <div class="container my-5">
+        <h2 class="text-center mb-4" style="color: white;"><b>Doctors</b></h2>
+
+
+        <!-- Search Box -->
+        <form method="get" action="/vw_doc" class="mb-4" id="searchForm">
+            <input type="text" name="q" class="form-control search-input" placeholder="Search Doctors..." value="{{ search_query }}" oninput="autoSubmit()">
+        </form>
+
+        <script>
+            function autoSubmit() {
+                var form = document.getElementById('searchForm');
+                clearTimeout(form.autoSubmitTimer);
+                form.autoSubmitTimer = setTimeout(function () {
+                    form.submit();
+                }, 500);
+            }
+        </script>
+
+        <div id="results">
+        {% if request.session.ut == 1 %}
+            <!-- Card View -->
+            <div class="row">
+                {% for user in mymodels %}
+                    <div class="col-md-4">
+                        <div class="res-card">
+                            <h4><strong>{{ user.username }}</strong></h4>
+                            <p>{{ user.place }}</p>
+                            <p>{{ user.phone }}</p>
+                            <p>
+                                <a href="{{ user.location }}">
+                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                </a>
+                            </p>
+                            <p class='text-danger'>
+                                {% if current_user.usertype == 1 %}
+                                    Distance: {{ user.dis|default:"0" }} km
+                                {% endif %}
+                            </p>
+                            {% comment %} <p>
+                                <a href="/book_appointment/{{ user.id }}/" class="delete-icon">
+                                    <i class="fa fa-ticket">Book</i>
+                                </a>
+                            </p>
+                            <p>
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#feedbackModal{{ user.id }}">
+                                    Feedbacks
+                                </button>
+                                <br>
+                            </p> {% endcomment %}
+                        </div>
+                        <br>
+                    </div>
+
+                    <!-- Feedback Modal -->
+                    <!-- Feedback Modal -->
+<div class="modal fade" id="feedbackModal{{ user.id }}" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel{{ user.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="feedbackModalLabel{{ user.id }}">Feedback for {{ user.username }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% for feedback in feedbacks %}
+                    {% if feedback.booking_id.dr_id == user %}
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <strong>{{ feedback.user_id.username|upper }}</strong>: {{ feedback.comments|default:"No comments" }}
+                                <div class="star-rating">
+                                    {% for i in "12345" %}
+                                        {% if i|add:"0" <= feedback.rating %}
+                                            <i class="fa fa-star" style="color: orange;"></i> <!-- Filled star -->
+                                        {% else %}
+                                            <i class="fa fa-star" style="color: lightgray;"></i> <!-- Empty star -->
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted">{{ feedback.created_at }}</small>
+                            </li>
+                        </ul>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Feedback Modal -->
+
+                    <!-- End of Feedback Modal -->
+
+                {% empty %}
+                    <p>No approved Doctors available.</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}
+{% include 'footer.html' %}
+
+<!-- Bootstrap JS (for modal functionality) -->

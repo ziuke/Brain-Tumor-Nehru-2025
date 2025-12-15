@@ -1,0 +1,212 @@
+{% load static %}
+{% include 'header.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Form</title>
+    <style>
+        .reg-form input[type="text"], .reg-form input[type="email"], .reg-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .reg-form label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .reg-form button[type="submit"] {
+            background-color: #2068a8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .reg-form button[type="submit"]:hover {
+            background-color: #3c5973;
+        }
+
+        .errorlist {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .form-check input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 15px;
+            height: 15px;
+            border: 2px solid black;
+            border-radius: 3px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .form-check input[type="checkbox"]:checked {
+            background-color: rgb(75, 116, 228);
+        }
+
+        .form-check-label {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .disease-box {
+            border: 2px solid rgb(29, 49, 198);
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #fbfbff;
+            margin-bottom: 20px;
+        }
+
+        .disease-box label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner-w3l-main">
+        <br>
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center align-items-center min-vh-100">
+                <div class="col-lg-6 col-md-8 col-sm-12">
+                    <br><br><br><br>
+                    <div class="card p-4 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="text-center mb-4"><b>Register</b></h2>
+
+                            <!-- Display global error/success messages -->
+                            {% if messages %}
+                                <div class="alert-container">
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{ message.tags }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <form class="reg-form" action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                
+
+                                <!-- Render the form fields -->
+                                {% for field in form %}
+                                    <div class="form-group">
+                                        <label class="req-field" for="{{ field.auto_id }}">{{ field.label }}</label>
+
+                                        <!-- Special handling for country field (dropdown) -->
+                                        {% if field.name == "country" %}
+                                            {{ field }}
+                                            {% if field.errors %}
+                                                <ul class="errorlist">
+                                                    {% for error in field.errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% elif field.name == "phone" %}
+                                            <div class="d-flex">
+                                                <div style="flex: 1; max-width: 20%; margin-right: 10px;">
+                                                    <input id="country_code" class="form-control" type="text" name="country_code" value="{{ form.country.value|default:'+91' }}" readonly />
+                                                </div>
+                                                <div style="flex: 4;">
+                                                    {{ field }}
+                                                </div>
+                                            </div>
+                                            {% if field.errors %}
+                                                <ul class="errorlist">
+                                                    {% for error in field.errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% elif field.name == "disease" %}
+                                            <div class="disease-box">
+                                                <div class="form-group">
+                                                    <label for="id_disease">Disease</label>
+                                                    {% for checkbox in form.disease %}
+                                                        <div class="form-check">
+                                                            {{ checkbox }}
+                                                            <label class="form-check-label" for="{{ checkbox.id_for_label }}"></label>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            {% if field.errors %}
+                                                <ul class="errorlist">
+                                                    {% for error in field.errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% else %}
+                                            {{ field }}
+                                            {% if field.errors %}
+                                                <ul class="errorlist">
+                                                    {% for error in field.errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+
+                                <button type="submit" class="btn-primary w-100">REGISTER</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Map of country codes
+        const countryCodes = {
+            "Afghanistan": "+93",
+            "Armenia": "+374",
+            "Bahrain": "+973",
+            "Bangladesh": "+880",
+            "Bhutan": "+975",
+            "Cambodia": "+855",
+            "China": "+86",
+            "India": "+91",
+            "Japan": "+81",
+            "Malaysia": "+60",
+            "Turkey": "+90",
+            "Others": "+999"
+        };
+
+        // Event listener for country select
+        document.getElementById('country_select').addEventListener('change', function () {
+            const selectedCountryCode = this.value || '';
+            document.getElementById('country_code').value = selectedCountryCode;
+        });
+
+        // Combine country code and phone number into the phone field before submission
+        document.querySelector('.reg-form').addEventListener('submit', function (e) {
+            const countryCode = document.getElementById('country_code').value;
+            const phoneField = document.querySelector('input[name="phone"]');
+            phoneField.value = countryCode + phoneField.value;  // Combine the country code and phone number
+        });
+    </script>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+{% endblock %}
+{% include 'footer.html' %}

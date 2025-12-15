@@ -1,0 +1,94 @@
+{% load static %}
+
+{% block content %}
+{% include 'header.html' %}
+
+<link rel="stylesheet" href="{% static 'css/predict.css' %}">
+
+<div class="banner-w3l-main">
+    <br>
+    <br><br><br>
+    <div class="container mt-5 mb-5 rounded mt-5">
+        <div class="row justify-content-center align-items-start rounded">
+            <div class="col-lg-7 col-md-8 col-sm-12 rounded">
+                <div class="card p-4 shadow-sm rounded">
+                    <div class="card-body rounded">
+                        <h2 class="text-center mb-3"><b>MRI Scan Upload</b></h2>
+
+                        <!-- Messages -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert-message {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- Explanation / Info -->
+                        <div class="info-card">
+                            <h5>About Brain Tumor Detection</h5>
+                            <p>
+                                Upload your brain MRI scan image here for automated tumor detection and classification. 
+                                The system uses advanced deep learning models to analyze your scan and provide predictions.
+                            </p>
+
+                            <strong>Accepted Formats</strong>
+                            <ul class="hint-list">
+                                <li>Image formats: <b>JPG, JPEG, PNG</b></li>
+                                <li>Maximum file size: <b>10 MB</b></li>
+                                <li>Make sure the image is a clear brain MRI scan for best results</li>
+                            </ul>
+                            
+                            <strong>What We Detect</strong>
+                            <ul class="hint-list">
+                                <li><b>Glioma:</b> A type of tumor that occurs in the brain</li>
+                                <li><b>Meningioma:</b> Tumors that arise from the meninges</li>
+                                <li><b>Pituitary:</b> Tumors in the pituitary gland</li>
+                                <li><b>No Tumor:</b> Normal brain scan with no tumor detected</li>
+                            </ul>
+                        </div>
+
+                        <!-- Upload Form -->
+                        <form class="upload-form mb-4" action="{% url 'check_mri' %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            {% if form %}
+                                {% for field in form %}
+                                    <div class="form-group mb-3">
+                                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                                        {{ field }}
+                                        {% if field.help_text %}
+                                            <small class="file-meta">{{ field.help_text }}</small>
+                                        {% endif %}
+                                        {% if field.errors %}
+                                            <div class="text-danger">
+                                                {% for error in field.errors %}
+                                                    <small>{{ error }}</small>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="form-group mb-3">
+                                    <label for="scan_file">Select Brain MRI Scan Image</label>
+                                    <input type="file" class="form-control" id="scan_file" name="image" accept="image/jpeg,image/jpg,image/png" required>
+                                    <small class="file-meta">Allowed: JPG, JPEG, PNG (Max 10MB)</small>
+                                </div>
+                            {% endif %}
+
+                            <button type="submit" class="btn btn-primary w-100">Upload & Analyze</button>
+                        </form>
+
+
+                        <p class="text-muted small mt-3">By uploading you confirm you have the right to share the data and that sensitive personal data has been handled appropriately.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

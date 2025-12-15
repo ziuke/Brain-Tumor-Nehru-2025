@@ -1,0 +1,132 @@
+body {
+    font-family: Arial, sans-serif;  
+
+    margin: 20px;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  #symptom {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  #add {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #predict {
+    margin-left: 10px;
+    padding: 10px 15px;
+    background-color: #3498DB;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #symptoms {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+
+  #result {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-top: 20px;
+  }
+  
+
+  i{
+      color:lightblue;
+      font-size:30px;
+  }
+
+
+
+  .login-form input[type="text"], .login-form input[type="email"], .login-form input[type="password"],
+    .upload-form input[type="file"], .upload-form input[type="text"], .upload-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .upload-form label {
+        font-weight: bold;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .upload-form button[type="submit"] {
+        background-color: #2068a8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        border-radius: 6px;
+    }
+
+    .upload-form button[type="submit"]:hover {
+        background-color: #3c5973;
+    }
+
+    .alert-message {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .info-card {
+        background: #f7fbff;
+        border: 1px solid #e3eef9;
+        padding: 18px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+    }
+
+    .hint-list {
+        margin-top: 8px;
+        margin-left: 18px;
+    }
+
+    .file-meta {
+        font-size: 13px;
+        color: #444;
+        margin-top: 6px;
+    }

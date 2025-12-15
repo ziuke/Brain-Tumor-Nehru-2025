@@ -1,0 +1,55 @@
+{% load static %}
+{% block content %}
+{% include 'header.html' %}
+<style>
+    h1,table tr th, table tr td{
+        color:white;
+    }
+    .container1{
+        margin-top: 10%px;
+    }
+
+</style>
+<div class="banner-w3l-main">
+<div class="container container1">
+<h1>Doctor Approval List</h1>
+{% if doctors %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Place</th>
+            <th>Specialization</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doctor in doctors %}
+        <tr>
+            <td>{{ doctor.username }}</td>
+            <td>{{ doctor.phone }}</td>
+            <td>{{ doctor.email }}</td>
+            <td>{{ doctor.place }}</td>
+            <td>{{ doctor.specialization }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="doctor_id" value="{{ doctor.id }}">
+                    <button type="submit" name="action" value="approve">Approve</button>
+                    <button type="submit" name="action" value="reject">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No doctors are currently awaiting approval.</p>
+{% endif %}
+</div>
+</div>
+
+{% endblock  %}
+{% include 'footer.html' %}

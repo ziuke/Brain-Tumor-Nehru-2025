@@ -1,0 +1,65 @@
+{% load static %}
+
+{% block content %}
+{% include 'header.html' %}
+<style>
+    h1,table tr th, table tr td{
+        color:white;
+    }
+    .container1{
+        /* margin-top:10%; */
+    }
+
+</style>
+
+<div class="banner-w3l-main mt-5">
+    <div class="container1 container">
+        <h1>USERS </h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <!-- <th>Image</th> -->
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Place</th>
+                    <th>Image</th>
+                    <!-- <th>Specialization</th> -->
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if mymodels %}
+                {% for mymodel in mymodels %}
+                    <tr>
+                       <td>{{ mymodel.username }}</td> 
+                        <td>{{ mymodel.email }}</td>
+                        <td>{{ mymodel.phone }}</td>
+                        <td>{{ mymodel.place }}</td>
+                        {% if  mymodel.image %}
+                        <td><a href="{{ mymodel.image.url }}"><img src="{{ mymodel.image.url }}" style="width:50px;height:50px;border-radius:70px;"></a></td>
+                        {% else %}
+                        <td>No Image</td>
+                        {% endif %}
+                        <!-- {% if  mymodel.specialization %}
+                        <td>{{ mymodel.specialization }}</td>
+                        {% else %}
+                        <td>
+                            Nil
+                        </td>
+                        {% endif %} -->
+                        
+                    </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</html>
+
+{% endblock  %}
+{% include 'footer.html' %}
+
+
+

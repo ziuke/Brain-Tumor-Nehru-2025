@@ -1,0 +1,210 @@
+{% load static %}
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com 
+-->
+<!doctype html>
+<html lang="zxx">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="keywords"
+    content="Brain Tumour, AI diagnosis, neuro-oncology, brain tumour support, brain cancer information" />
+  <title>Brain Tumour Hub</title>
+  <link href="//fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap"
+
+    rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="{% static 'css/style-starter.css' %}">
+</head>
+
+<body>
+  <div class="header-w3l">
+  <!--header-->
+  <header id="site-header" class="header-w3l fixed-top">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg stroke">
+        <a class="navbar-brand" href="index.html">
+          B<span class="sub-logo">r</span>ain Tumou<span class="sub-logo">r</span> Hub
+        </a>
+        <!-- if logo is image enable this   
+            <a class="navbar-brand" href="#index.html">
+                <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
+            </a> -->
+        <button class="navbar-toggler  collapsed bg-gradient" type="button" data-toggle="collapse"
+          data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+          <span class="navbar-toggler-icon fa icon-close fa-times"></span>
+          </span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          
+          
+          <ul class="navbar-nav mx-lg-auto">
+            {% if request.session.ut == 0 %}
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/vw_users/1/">View Users</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Doctors 
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/doctor_approval_list">Request  </a>
+                  <a class="dropdown-item" href="/vw_users/2/">View Approved </a>
+                 
+              </div>
+          </li>
+            
+            
+           
+            <!--
+          <li class="nav-item">
+              <a class="nav-link" href="/">Contact</a>
+            </li>
+          -->
+            
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          
+
+            {% elif request.session.ut == 1 %}
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">About</a>
+            </li>
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="/">View Doc</a>
+            </li> -->
+         
+            <li class="nav-item">
+              <a class="nav-link" href="/check_mri/">Check MRI </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/prediction_history/"> Prediction History</a>
+            </li>
+           
+            
+            
+            
+         
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            
+            {% elif request.session.ut == 2 %}
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/">Update Location</a>
+            </li>
+         
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            
+            {% else %}
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/about">About</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Register Here 
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="/user_register">User  </a>
+                  <a class="dropdown-item" href="/doctor_register">Doctor </a>
+                  <!-- Add more options here -->
+              </div>
+          </li>
+            <!--
+          <li class="nav-item">
+              <a class="nav-link" href="/">Contact</a>
+            </li>
+          -->
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            
+            {% endif %}
+            {% if request.user.username %}
+            <li class="nav-item mt-3 text-info">
+              Hi
+              <i class="fa fa-hand-peace-o text-light text-info"></i>
+
+             
+            <b class="text-info"> {{ request.user.username}}</b>
+             {% else %}
+             {% endif %}
+            </li>
+          </ul>
+
+        </div>
+        <!-- toggle switch for light and dark theme -->
+        
+        <!-- //toggle switch for light and dark theme -->
+      </nav>
+    </div>
+  </header>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+      {% if 'log' in message.tags %}
+        
+          <script>
+    
+                <div class="alert alert-success alert-dismissable fade show" role="alert">
+                      {{message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+          </script>
+      {% elif 'log_dr' in message.tags %}
+        
+          <script>
+    
+                <div class="alert alert-success alert-dismissable fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+          </script>
+      {% elif 'user_reg' in message.tags %}
+        
+          <script>
+    
+                <div class="alert alert-success alert-dismissable fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+          </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}

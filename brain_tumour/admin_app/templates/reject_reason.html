@@ -1,0 +1,43 @@
+{% load static %}
+
+{% block content %}
+{% include 'header.html' %}
+
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title> </title> 
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/> 
+</head>
+<body>
+    <div class="banner-w3l-main">
+        <br>
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center align-items-center min-vh-100">
+                <div class="col-lg-6 col-md-8 col-sm-12">
+                    <div class="card p-4 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="text-center mb-4"><b>Reason For Rejection</b></h2>
+    
+                            
+                                <form class="Reset-form" method="post">
+                                {% csrf_token %}
+                                {{ form.as_p }} <br>
+                                    <button type="submit">Reject</button>
+                                </form></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</body>
+</html> 
+
+{% endblock  %}
+{% include 'footer.html' %}
+
+  
+
+            

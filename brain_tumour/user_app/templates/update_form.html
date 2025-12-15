@@ -1,0 +1,65 @@
+{% load static %}
+
+{% block content %}
+{% include 'header.html' %}
+
+    <div class="register-container"> 
+        <form class="Reg-form" method="POST" enctype="multipart/form-data"> 
+            <h2>Register</h2> 
+             
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Email:</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error">
+                        {{ form.email.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">Phone:</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="error">
+                        {{ form.phone.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Place:</label>
+                {{ form.place }}
+                {% if form.place.errors %}
+                    <div class="error">
+                        {{ form.place.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <div class="form-group">
+                <label for="{{ form.image.id_for_label }}">Image:</label>
+                {% if form.instance.image %}  {# assuming image is your image field #}
+                    <img src="{{ form.instance.image.url }}" alt="image" class="resized-image">
+                {% endif %}
+                <div class="image-field">
+                    <input type="file" name="{{ form.image.name }}" id="{{ form.image.id_for_label }}">
+                </div>
+                {% if form.image.errors %}
+                    <div class="error">
+                        {{ form.image.errors }}
+                    </div> 
+                {% endif %}
+            </div>
+            <br>
+            <button type="submit">UPDATE</button> 
+        </form>
+    </div>
+</body>
+</html>
+
+{% endblock  %}
+{% include 'footer.html' %}

@@ -1,0 +1,29 @@
+{% load static %} 
+{% include 'header.html' %}
+{% block content %}
+
+    <div class="register-container" style="height: 100vh;">
+        <div class="profile-info p-3 mt-3">
+            <div class="image">
+                <div class="trick">
+                    {% if user.image %}
+                        <img src="{{ user.image.url }}" alt="Profile Image" style="width: 150px; height: 150px; border-radius: 80px;">
+                    {% else %}
+                        <img src="{% static 'images/default.png' %}" alt="Default Profile Image" style="width: 150px; height: 150px; border-radius: 80px;">
+                    {% endif %}
+                </div>
+            </div>
+            <hr style="margin-top: 70px;">
+            <div class="col-md-12 justify-content-center">
+                <p style="margin-left: 160px; margin-top: 40px;"><strong> {{ user.username }} </strong></p>
+                <p><strong>Email Address:</strong> {{ user.email }}</p>
+                <p><strong>Phone:</strong> {{ user.phone }}</p>
+                <p><strong>Place:</strong> {{ user.place }}</p>
+            </div>
+            <button type="submit" style="width: 200px;  margin-left: 100px;" class="mt-4 btn-success"><a href="/edit_profile">UPDATE</a></button> <br>
+            <a href="/password_change_form" id="forgot-password"style="margin-left: 140px;">Reset Password</a>
+        </div>
+    </div>
+
+{% endblock  %}
+{% include 'footer.html' %}

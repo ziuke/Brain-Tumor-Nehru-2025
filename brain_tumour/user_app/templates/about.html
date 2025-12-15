@@ -1,0 +1,115 @@
+{% load static %}
+{% include 'header.html' %}
+
+<!-- Breadcrumb -->
+
+<div class="breadcrumb-bg w3l-inner-page-breadcrumb py-5">
+  <div class="container pt-lg-5 pt-md-3 p-lg-4 pb-md-3 my-lg-3">
+    <h2 class="title pt-5">About</h2>
+    <ul class="breadcrumbs-custom-path mt-3 text-center">
+      <p class="text-light">
+        Welcome to <strong>Brain Tumour Hub</strong>, an intelligent healthcare platform that leverages deep learning for early brain tumour detection and analysis.
+        We aim to make diagnostic imaging faster, more reliable, and accessible to everyone.
+      </p>
+    </ul>
+  </div>
+</div>
+
+<!-- Shape Divider -->
+
+<div class="position-relative">
+  <div class="shape overflow-hidden">
+    <svg viewBox="0 0 2880 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 48H1437.5H2880V0H2160C1442.5 52 720 0 720 0H0V48Z" fill="currentColor"></path>
+    </svg>
+  </div>
+</div>
+
+<!-- About Section -->
+
+<section class="w3l-about-ab" id="about">
+  <div class="midd-w3 py-5">
+    <div class="container py-lg-5 py-md-4 py-2">
+      
+
+
+  <div class="row">
+    <div class="col-lg-5 left-wthree-img">
+      <h6 class="title-subhny">About Us</h6>
+      <h3 class="title-w3l mb-4">AI-Powered Brain Tumour Detection</h3>
+      <p>
+        At <strong>Brain Tumour AI</strong>, our mission is to harness artificial intelligence and medical imaging to aid in early tumour diagnosis. Our algorithms are trained on thousands of MRI images, capable of classifying tumour types and predicting malignancy with remarkable precision.  
+      </p>
+      <p class="mt-3">
+        We collaborate with healthcare experts and institutions to deliver a system that is both clinically reliable and user-friendly. Whether you’re a medical professional or a researcher, Brain Tumour AI empowers you to explore, analyze, and interpret MRI scans more effectively.
+      </p>
+    </div>
+    <div class="col-lg-7 pl-lg-5 align-self">
+      <div class="imgw3l-ab mb-md-5 mb-3 text-center">
+        <img src="{% static 'images/brain.jpg' %}" alt="Brain MRI" class="radius-image img-fluid">
+      </div>
+      
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- Core Values -->
+
+<section class="w3l-bottom-grids-6 py-5" id="values">
+  <div class="container py-lg-5 py-md-4 py-2">
+    <div class="title-content text-center">
+      <h6 class="title-subhny text-center">AI in Healthcare</h6>
+      <h3 class="title-w3l mb-sm-5 mb-4 pb-sm-0 pb-2 text-center">Our Core Principles</h3>
+    </div>
+    <div class="grids-area-hny text-center row mt-lg-4">
+      <div class="col-lg-4 col-md-6 grids-feature">
+        <div class="area-box icon-blue">
+          <span class="fa fa-microchip"></span>
+          <h4><a href="#feature" class="title-head">Innovation</a></h4>
+          <p>We utilize state-of-the-art neural networks for automated brain scan segmentation and tumour classification.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 grids-feature mt-md-0 mt-4">
+        <div class="area-box icon-pink">
+          <span class="fa fa-heart"></span>
+          <h4><a href="#feature" class="title-head">Precision</a></h4>
+          <p>Our AI models are fine-tuned using medical datasets to ensure accurate, trustworthy diagnostic predictions.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 grids-feature mt-lg-0 mt-4">
+        <div class="area-box icon-yellow">
+          <span class="fa fa-shield"></span>
+          <h4><a href="#feature" class="title-head">Integrity</a></h4>
+          <p>We prioritize data privacy and compliance with healthcare standards to protect patient information at every level.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Advantages -->
+
+<section class="w3l-two-servicses py-5" id="advantages">
+  <div class="container py-lg-5 py-md-4 py-2">
+    <div class="row bottom-ab-grids">
+      <div class="col-lg-6 bottom-ab-left align-self">
+        <h6 class="title-subhny">Why Choose Us</h6>
+        <h3 class="title-w3l mb-4">Our Key Advantages</h3>
+        <ul class="w3l-right-book mt-4">
+          <li><span class="fa fa-check"></span> <strong>Deep Learning Models:</strong> Tumor prediction and classification from MRI images with high accuracy.</li>
+          <li><span class="fa fa-check"></span> <strong>Cloud Integration:</strong> Access AI predictions from any device without heavy computational resources.</li>
+          <li><span class="fa fa-check"></span> <strong>Medical Collaboration:</strong> Built alongside neurosurgeons and radiologists for real-world reliability.</li>
+          <li><span class="fa fa-check"></span> <strong>Data Privacy:</strong> HIPAA-compliant encryption and anonymization protocols to safeguard patient data.</li>
+        </ul>
+      </div>
+      <div class="col-lg-6 bottom-ab-right mt-lg-0 mt-5">
+        <img src="{% static 'images/brain_tomour.png' %}" alt="Advantages" class="img-fluid radius-image">
+      </div>
+    </div>
+  </div>
+</section>
+{% include 'footer.html' %}
