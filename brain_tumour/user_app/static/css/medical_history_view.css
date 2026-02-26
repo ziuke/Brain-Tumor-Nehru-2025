@@ -1,0 +1,25 @@
+/* ============================================================
+   Brain Tumour Hub — Medical History Styles
+   ============================================================ */
+
+.bg-light-stripe {
+    background: rgba(0, 188, 212, 0.02);
+}
+
+.admin-card .admin-card-header {
+    background-color: #fbfcfe;
+}
+
+.table thead th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.border-info {
+    border-color: #0ea5e9 !important;
+}
+
+.italic {
+    font-style: italic;
+}

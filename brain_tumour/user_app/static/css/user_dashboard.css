@@ -1,0 +1,210 @@
+/* ============================================================
+   Brain Tumour Hub  —  User Dashboard Styles (Light Theme)
+   ============================================================ */
+
+.dashboard-wrapper {
+    padding: 100px 0 80px;
+    background: var(--bg-main);
+    min-height: 100vh;
+}
+
+/* Welcome Section */
+.welcome-banner {
+    margin-bottom: 40px;
+}
+
+.welcome-banner h2 {
+    color: var(--primary);
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.welcome-banner p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+/* Stats Cards */
+.stat-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+/* Section Cards */
+.section-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.section-card .card-header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 22px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-card .card-header h5 {
+    color: var(--primary);
+    font-weight: 700;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Quick Actions */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 15px;
+    padding: 25px;
+}
+
+.action-btn {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    color: var(--primary);
+    border-radius: 18px;
+    padding: 20px 10px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    text-decoration: none;
+}
+
+.action-btn i {
+    font-size: 1.8rem;
+}
+
+/* Tables */
+.bth-table {
+    width: 100%;
+}
+
+.bth-table thead th {
+    background: #f8fafc;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 15px 25px;
+    border-bottom: 1px solid var(--border);
+}
+
+.bth-table tbody td {
+    padding: 18px 25px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-light);
+}
+
+/* Badges */
+.badge-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.bg-requested {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.bg-confirmed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.bg-completed {
+    background: #e0f2fe;
+    color: #075985;
+}
+
+/* Items */
+.feed-item {
+    padding: 18px 25px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    gap: 15px;
+}
+
+.feed-item:last-child {
+    border-bottom: none;
+}
+
+.feed-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
+.feed-content .title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 2px;
+}
+
+.feed-content .text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}

@@ -1,0 +1,39 @@
+/* ============================================================
+   Brain Tumour Hub — Specialists Directory Styles
+   ============================================================ */
+
+.doctor-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.doctor-card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.doctor-avatar {
+    flex-shrink: 0;
+}
+
+.doctor-info-list div i {
+    opacity: 0.8;
+}
+
+.last-child-no-border:last-child {
+    border-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.star-rating i {
+    margin-right: 2px;
+}
+
+#searchForm .input-group-text {
+    border-color: var(--border);
+}
+
+#searchForm .form-control:focus {
+    box-shadow: none;
+    border-color: var(--border);
+}

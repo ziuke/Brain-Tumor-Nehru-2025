@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.db.models.query import QuerySet
 from django.shortcuts import render,redirect, get_object_or_404
+from django.http import HttpResponseForbidden
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.conf import settings
@@ -20,6 +21,19 @@ import string
 # from django.db.models import F, FloatField, ExpressionWrapper, Func
 from django.views.generic import *
 from django.db.models import Q
+from django.utils import timezone
+from decimal import Decimal
+from django.db.models import Count
+import random
+
+def generate_random_password(length=6):
+    characters = string.ascii_letters # Only letters as requested
+    return ''.join(random.choice(characters) for _ in range(length))
+
+try:
+    import razorpay
+except Exception:
+    razorpay = None
 
 
 
@@ -66,6 +80,14 @@ def doLogin(request):
         request.session['ut'] = data.usertype
         request.session['uid'] = data.id
         messages.success(request, f"Login Successful! Welcome {data.username}.", extra_tags='log')
+        
+        if data.usertype == 0:
+            return redirect('admin_dashboard')
+        elif data.usertype == 1:
+            return redirect('user_dashboard')
+        elif data.usertype == 2:
+            return redirect('doctor_dashboard')
+        
         return redirect('/')
 
     return render(request, 'login.html', {'form': form}) 
@@ -136,43 +158,75 @@ def doctor_register(request):
             # Here, we're passing form.errors to the template when the form is invalid
             print(form.errors)
             messages.error(request, 'There were errors in your form. Please check the details and try again.')
-        return render(request, 'register.html', {'form': form})
+        return render(request, 'doctor_register.html', {'form': form})
     else:
         form = DoctorRegisterForm()
         print(form.errors)
         title = 'Doctor Register'
-    return render(request, 'register.html', {'form': form, 'title': title})
+    return render(request, 'doctor_register.html', {'form': form, 'title': title})
 
 def forgotpswd(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        try:
+            user = Register.objects.get(email=email)
+            otp = generate_random_password(6).upper()
+            request.session['reset_otp'] = otp
+            request.session['reset_email'] = email
+            
+            # Send OTP email
+            subject = 'Password Reset request - Brain Tumour Hub'
+            message = f"Hello {user.username},\n\nYour 6-letter OTP for password reset is: {otp}\n\nDo not share this OTP with anyone.\n\nRegards,\nBrain Tumour Hub Team"
+            email_from = settings.EMAIL_HOST_USER
+            recepient_list = [user.email]  
+            send_mail(subject, message, email_from, recepient_list, fail_silently=True)
+            
+            messages.success(request, f'OTP sent successfully to {email}.', extra_tags='success')
+            return redirect('/reset_password')
+        except Register.DoesNotExist:
+            messages.error(request, 'This email is not registered with an account.', extra_tags='error')
+            return render(request, "forgotpswd.html")
+            
     return render(request, 'forgotpswd.html', {'user': request.user})
 
-def profile(request):
-    return render(request, 'profile.html', {'user': request.user})
-
-def generate_random_password(length=6):
-    characters = string.ascii_letters + string.digits
-    password = ''.join(secrets.choice(characters) for _ in range(length))
-    return password
-
 def reset_password(request):
+    # Ensure they came from the forgotpswd flow
+    if 'reset_email' not in request.session or 'reset_otp' not in request.session:
+        messages.error(request, 'Session expired. Please request a new OTP.', extra_tags='error')
+        return redirect('/forgotpswd/')
+        
     if request.method == "POST":
-
-                user = Register.objects.get(username=request.POST['username'])
-                print("USERSS",user)
-                new_password = generate_random_password()
-                user.password = make_password(new_password)
-                print('Nesw Passworddddddddd',new_password)
-                user.save()
-                subject = 'password'
-                message = "your password is " + str(new_password)
-                email_from = settings.EMAIL_HOST_USER
-                recepient_list = [user.email]  
-                send_mail(subject,message,email_from,recepient_list)
-                messages.success(request, f'New Password is send to your registered email. Use it for login and change your password in your profile section. ', extra_tags='log')
-               
-    else:
-        return render(request,"forgotpswd.html")
-    return redirect('/login')
+        otp = request.POST.get('otp', '').upper()
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        saved_otp = request.session.get('reset_otp')
+        reset_email = request.session.get('reset_email')
+        
+        if otp != saved_otp:
+            messages.error(request, 'Invalid OTP or expired. Please try again.', extra_tags='error')
+            return render(request, "reset_password.html")
+            
+        if new_password != confirm_password:
+            messages.error(request, 'Passwords do not match.', extra_tags='error')
+            return render(request, "reset_password.html")
+            
+        try:
+            user = Register.objects.get(email=reset_email)
+            user.password = make_password(new_password)
+            user.save()
+            
+            # Clear session variables
+            del request.session['reset_otp']
+            del request.session['reset_email']
+            
+            messages.success(request, 'Password reset successful! You can now login with your new password.', extra_tags='success')
+            return redirect('/login')
+        except Register.DoesNotExist:
+            messages.error(request, 'User no longer exists.', extra_tags='error')
+            return redirect('/forgotpswd/')
+            
+    return render(request, "reset_password.html")
 
 def edit_profile(request):
     if request.method == 'POST':
@@ -256,23 +310,24 @@ def check_mri(request):
                 file_path = fs.path(filename)
                 
                 # Get model path and train directory
-                # BASE_DIR is brain_tumour/brain_tumour, parent is brain_tumour/
-                project_root = os.path.dirname(settings.BASE_DIR)
-                model_path = os.path.join(project_root, 'models', 'brain_tumor_model.h5')
-                train_dir = os.path.join(project_root, 'archive', 'Training')
+                model_path = os.path.join(settings.BASE_DIR, 'models', 'brain_tumor_model.h5')
+                train_dir = os.path.join(settings.BASE_DIR, 'archive', 'Training')
                 
-                # Add project root to path for importing predict module
-                if project_root not in sys.path:
-                    sys.path.insert(0, project_root)
+                # Add BASE_DIR to path for importing predict module
+                if str(settings.BASE_DIR) not in sys.path:
+                    sys.path.insert(0, str(settings.BASE_DIR))
                 
                 # Import prediction function
                 try:
-                    from brain_tumour.predict import predict_from_upload
+                    # Try direct import from the package
+                    import predict
+                    predict_from_upload = predict.predict_from_upload
                 except ImportError:
-                    # Try alternative path
-                    predict_module_path = os.path.join(project_root, 'predict.py')
+                    # Fallback to absolute file location import
+                    import importlib.util
+                    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                    predict_module_path = os.path.join(current_dir, 'predict.py')
                     if os.path.exists(predict_module_path):
-                        import importlib.util
                         spec = importlib.util.spec_from_file_location("predict", predict_module_path)
                         predict_module = importlib.util.module_from_spec(spec)
                         sys.modules["predict"] = predict_module
@@ -365,6 +420,21 @@ def prediction_result(request, prediction_id):
         'class_display': class_display,
         'all_probabilities_percent': all_probabilities_percent,
     }
+
+    class_to_specialization = {
+        'glioma': ['Neuro-Oncology', 'Neurosurgery'],
+        'meningioma': ['Neuro-Oncology', 'Neurosurgery'],
+        'pituitary': ['Neuro-Oncology', 'Neurosurgery'],
+        'notumor': ['Neurology', 'Neuro-Oncology'],
+    }
+    target_specs = class_to_specialization.get(prediction.predicted_class.lower(), ['Neurology'])
+    recommended_doctors = Register.objects.filter(
+        usertype=2,
+        is_active=True,
+        is_approved=True,
+        specialization__in=target_specs
+    )
+    context['recommended_doctors'] = recommended_doctors
     
     return render(request, 'prediction_result.html', context)
 
@@ -401,3 +471,398 @@ def delete_prediction(request, prediction_id):
     
     messages.success(request, 'Prediction deleted successfully.')
     return redirect('prediction_history')
+
+
+def _send_email(subject, message, recipients):
+    try:
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipients, fail_silently=True)
+    except Exception:
+        pass
+
+
+def user_dashboard(request):
+    if request.session.get('ut') != 1:
+        return HttpResponseForbidden("Not authorized.")
+    appointments = Appointment.objects.filter(patient=request.user).order_by('-created_at')
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:10]
+    queries = DoctorQuery.objects.filter(patient=request.user).order_by('-created_at')[:10]
+    predictions_count = PredictionResult.objects.filter(user=request.user).count()
+    unread_notifications = Notification.objects.filter(user=request.user, is_read=False).count()
+    pending_queries = DoctorQuery.objects.filter(patient=request.user, answer__isnull=True).count()
+    # Mark notifications as read
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return render(request, 'user_dashboard.html', {
+        'appointments': appointments,
+        'notifications': notifications,
+        'queries': queries,
+        'predictions_count': predictions_count,
+        'unread_notifications': unread_notifications,
+        'pending_queries': pending_queries,
+    })
+
+
+def doctor_dashboard(request):
+    if request.session.get('ut') != 2:
+        return HttpResponseForbidden("Not authorized.")
+    appointments = Appointment.objects.filter(doctor=request.user).order_by('-created_at')
+    availabilities = DoctorAvailability.objects.filter(doctor=request.user).order_by('date')
+    queries = DoctorQuery.objects.filter(doctor=request.user).order_by('-created_at')[:10]
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:8]
+    total_appointments = appointments.count()
+    pending_appointments = appointments.filter(status='requested').count()
+    unique_patients = appointments.values('patient').distinct().count()
+    pending_queries = DoctorQuery.objects.filter(doctor=request.user, answer__isnull=True).count()
+    # Mark notifications as read
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return render(request, 'doctor_dashboard.html', {
+        'appointments': appointments,
+        'availabilities': availabilities,
+        'queries': queries,
+        'notifications': notifications,
+        'total_appointments': total_appointments,
+        'pending_appointments': pending_appointments,
+        'unique_patients': unique_patients,
+        'pending_queries': pending_queries,
+    })
+
+
+def doctor_profile_edit(request):
+    if request.session.get('ut') != 2:
+        return HttpResponseForbidden("Not authorized.")
+    profile, _ = DoctorProfile.objects.get_or_create(doctor=request.user)
+    if request.method == 'POST':
+        form = DoctorProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated.')
+            return redirect('doctor_dashboard')
+    else:
+        form = DoctorProfileForm(instance=profile)
+    return render(request, 'doctor_profile_edit.html', {'form': form})
+
+
+def doctor_availability_list(request):
+    if request.session.get('ut') != 2:
+        return HttpResponseForbidden("Not authorized.")
+    availabilities = DoctorAvailability.objects.filter(doctor=request.user)
+    return render(request, 'doctor_availability_list.html', {'availabilities': availabilities})
+
+
+def doctor_availability_add(request):
+    if request.session.get('ut') != 2:
+        return HttpResponseForbidden("Not authorized.")
+    if request.method == 'POST':
+        form = DoctorAvailabilityForm(request.POST)
+        if form.is_valid():
+            availability = form.save(commit=False)
+            availability.doctor = request.user
+            availability.save()
+            messages.success(request, 'Availability added.')
+            return redirect('doctor_availability_list')
+    else:
+        form = DoctorAvailabilityForm()
+    return render(request, 'doctor_availability_add.html', {'form': form})
+
+
+def doctor_availability_delete(request, availability_id):
+    if request.session.get('ut') != 2:
+        return HttpResponseForbidden("Not authorized.")
+    availability = get_object_or_404(DoctorAvailability, id=availability_id, doctor=request.user)
+    availability.delete()
+    messages.success(request, 'Availability removed.')
+    return redirect('doctor_availability_list')
+
+
+def book_appointment(request, doctor_id, prediction_id=None):
+    if request.session.get('ut') != 1:
+        return HttpResponseForbidden("Not authorized.")
+    doctor = get_object_or_404(Register, id=doctor_id, usertype=2, is_active=True, is_approved=True)
+    prediction = None
+    predicted_class = ''
+    if prediction_id:
+        prediction = get_object_or_404(PredictionResult, id=prediction_id, user=request.user)
+        predicted_class = prediction.predicted_class
+    if request.method == 'POST':
+        form = AppointmentRequestForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.patient = request.user
+            appointment.doctor = doctor
+            appointment.predicted_class = predicted_class
+            appointment.prediction_result = prediction
+            appointment.save()
+            Notification.objects.create(
+                user=doctor,
+                title='New Appointment Request',
+                message=f'New appointment request from {request.user.username}.'
+            )
+            _send_email(
+                'New Appointment Request',
+                f'You have a new appointment request from {request.user.username}.',
+                [doctor.email]
+            )
+            messages.success(request, 'Appointment requested.')
+            return redirect('user_dashboard')
+    else:
+        form = AppointmentRequestForm()
+    return render(request, 'appointment_request.html', {
+        'form': form,
+        'doctor': doctor,
+        'prediction': prediction,
+    })
+
+
+def appointment_detail(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    if request.user not in [appointment.patient, appointment.doctor]:
+        return HttpResponseForbidden("Not authorized.")
+    messages_qs = ChatMessage.objects.filter(appointment=appointment)
+    documents = Document.objects.filter(appointment=appointment)
+    treatment_plan = getattr(appointment, 'treatment_plan', None)
+    return render(request, 'appointment_detail.html', {
+        'appointment': appointment,
+        'messages_qs': messages_qs,
+        'documents': documents,
+        'treatment_plan': treatment_plan,
+    })
+
+
+def appointment_update_status(request, appointment_id, status):
+    appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
+    if status not in dict(Appointment.STATUS_CHOICES):
+        messages.error(request, 'Invalid status.')
+        return redirect('doctor_dashboard')
+    appointment.status = status
+    appointment.save()
+    Notification.objects.create(
+        user=appointment.patient,
+        title='Appointment Update',
+        message=f'Your appointment is now {status}.'
+    )
+    _send_email(
+        'Appointment Update',
+        f'Your appointment with {appointment.doctor.username} is now {status}.',
+        [appointment.patient.email]
+    )
+    messages.success(request, 'Appointment updated.')
+    return redirect('doctor_dashboard')
+
+
+def send_chat_message(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    if request.user not in [appointment.patient, appointment.doctor]:
+        return HttpResponseForbidden("Not authorized.")
+    if request.method == 'POST':
+        message_text = request.POST.get('message', '').strip()
+        if message_text:
+            ChatMessage.objects.create(appointment=appointment, sender=request.user, message=message_text)
+    return redirect('appointment_detail', appointment_id=appointment.id)
+
+
+def upload_document(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    if request.user not in [appointment.patient, appointment.doctor]:
+        return HttpResponseForbidden("Not authorized.")
+    if request.method == 'POST':
+        form = DocumentUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            doc = form.save(commit=False)
+            doc.appointment = appointment
+            doc.uploaded_by = request.user
+            doc.save()
+            messages.success(request, 'Document uploaded.')
+    return redirect('appointment_detail', appointment_id=appointment.id)
+
+
+def update_treatment_plan(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, doctor=request.user)
+    plan, _ = TreatmentPlan.objects.get_or_create(appointment=appointment)
+    if request.method == 'POST':
+        form = TreatmentPlanForm(request.POST, instance=plan)
+        if form.is_valid():
+            form.save()
+            Notification.objects.create(
+                user=appointment.patient,
+                title='Treatment Plan Updated',
+                message='Your treatment plan has been updated.'
+            )
+            messages.success(request, 'Treatment plan updated.')
+    return redirect('appointment_detail', appointment_id=appointment.id)
+
+
+def create_payment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user)
+    if razorpay is None:
+        messages.error(request, 'Razorpay not installed.')
+        return redirect('appointment_detail', appointment_id=appointment.id)
+    amount = Decimal('0.00')
+    if appointment.availability:
+        amount = appointment.availability.fee
+    elif hasattr(appointment.doctor, 'doctor_profile'):
+        amount = appointment.doctor.doctor_profile.consultation_fee
+    amount = amount if amount > 0 else Decimal('500.00')
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    order = client.order.create({
+        'amount': int(amount * 100),
+        'currency': 'INR',
+        'payment_capture': 1
+    })
+    payment, _ = Payment.objects.get_or_create(appointment=appointment)
+    payment.amount = amount
+    payment.razorpay_order_id = order.get('id', '')
+    payment.status = 'created'
+    payment.save()
+    return render(request, 'payment_checkout.html', {
+        'appointment': appointment,
+        'payment': payment,
+        'razorpay_key': settings.RAZORPAY_KEY_ID,
+        'amount_paise': int(amount * 100),
+        'order_id': payment.razorpay_order_id,
+    })
+
+
+def payment_success(request):
+    if request.method != 'POST':
+        return redirect('/')
+    appointment_id = request.POST.get('appointment_id')
+    payment_id = request.POST.get('razorpay_payment_id')
+    order_id = request.POST.get('razorpay_order_id')
+    signature = request.POST.get('razorpay_signature')
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    payment = get_object_or_404(Payment, appointment=appointment)
+    payment.razorpay_payment_id = payment_id or ''
+    payment.razorpay_order_id = order_id or payment.razorpay_order_id
+    payment.razorpay_signature = signature or ''
+    if razorpay is not None:
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        try:
+            client.utility.verify_payment_signature({
+                'razorpay_order_id': order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature,
+            })
+            payment.status = 'paid'
+        except Exception:
+            payment.status = 'failed'
+    else:
+        payment.status = 'paid'
+    payment.save()
+    if payment.status == 'paid':
+        Notification.objects.create(
+            user=appointment.doctor,
+            title='Payment Received',
+            message=f'Payment received for appointment from {appointment.patient.username}.'
+        )
+        _send_email(
+            'Payment Confirmation',
+            f'Payment received for appointment with {appointment.doctor.username}.',
+            [appointment.patient.email]
+        )
+    return render(request, 'payment_success.html', {'appointment': appointment, 'payment': payment})
+
+
+def submit_feedback(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, patient=request.user)
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.user = request.user
+            feedback.doctor = appointment.doctor
+            feedback.appointment = appointment
+            feedback.save()
+            messages.success(request, 'Feedback submitted.')
+    return redirect('appointment_detail', appointment_id=appointment.id)
+
+
+def user_queries(request):
+    if request.session.get('ut') != 1:
+        return HttpResponseForbidden("Not authorized.")
+    if request.method == 'POST':
+        form = DoctorQueryForm(request.POST)
+        if form.is_valid():
+            query = form.save(commit=False)
+            query.patient = request.user
+            query.save()
+            messages.success(request, 'Query sent.')
+            return redirect('user_queries')
+    else:
+        form = DoctorQueryForm()
+        form.fields['doctor'].queryset = Register.objects.filter(usertype=2, is_active=True, is_approved=True)
+    
+    doctors = Register.objects.filter(usertype=2, is_active=True, is_approved=True)
+    queries = DoctorQuery.objects.filter(patient=request.user)
+    return render(request, 'user_queries.html', {'form': form, 'queries': queries, 'doctors': doctors})
+
+
+def doctor_queries(request):
+    if request.session.get('ut') != 2:
+        return HttpResponseForbidden("Not authorized.")
+    queries = DoctorQuery.objects.filter(doctor=request.user)
+    return render(request, 'doctor_queries.html', {'queries': queries})
+
+
+def answer_query(request, query_id):
+    if request.session.get('ut') != 2:
+        return HttpResponseForbidden("Not authorized.")
+    query = get_object_or_404(DoctorQuery, id=query_id, doctor=request.user)
+    if request.method == 'POST':
+        form = DoctorAnswerForm(request.POST, instance=query)
+        if form.is_valid():
+            q = form.save(commit=False)
+            q.answered_at = timezone.now()
+            q.save()
+            Notification.objects.create(
+                user=query.patient,
+                title='Query Answered',
+                message='Your doctor has replied to your query.'
+            )
+            messages.success(request, 'Answer sent.')
+            return redirect('doctor_queries')
+    else:
+        form = DoctorAnswerForm(instance=query)
+    return render(request, 'doctor_answer_query.html', {'form': form, 'query': query})
+
+
+def medical_history_edit(request):
+    if request.session.get('ut') != 1:
+        return HttpResponseForbidden("Not authorized.")
+    history, _ = PatientMedicalHistory.objects.get_or_create(patient=request.user)
+    if request.method == 'POST':
+        form = PatientMedicalHistoryForm(request.POST, instance=history)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Medical history updated.')
+            return redirect('user_dashboard')
+    else:
+        form = PatientMedicalHistoryForm(instance=history)
+    return render(request, 'medical_history_edit.html', {'form': form})
+
+
+def medical_history_view(request, patient_id):
+    if request.session.get('ut') != 2:
+        return HttpResponseForbidden("Not authorized.")
+    patient = get_object_or_404(Register, id=patient_id, usertype=1)
+    history = getattr(patient, 'medical_history', None)
+    return render(request, 'medical_history_view.html', {'patient': patient, 'history': history})
+
+
+def notifications_list(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    unread_count = notifications.filter(is_read=False).count()
+    notifications.filter(is_read=False).update(is_read=True)
+    return render(request, 'notifications.html', {
+        'notifications': notifications,
+        'unread_count': unread_count,
+    })
+
+
+@login_required
+def profile_view(request):
+    return render(request, 'profile.html')
+
+
+@login_required
+def user_queries_post(request):
+    """Handle standalone query form POST from user_queries page."""
+    return user_queries(request)

@@ -1,0 +1,216 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+{% endblock %}
+
+<div class="admin-wrapper">
+  <div class="container">
+    <!-- Welcome Banner -->
+    <div class="dashboard-header d-flex justify-content-between align-items-center">
+      <div>
+        <h2><i class="fas fa-user mb-2"></i> Welcome, {{ request.user.name|default:request.user.username }}!</h2>
+        <p>Manage your health journey and consult with specialists.</p>
+      </div>
+      <div>
+        <a href="{% url 'profile' %}" class="btn-ghost-bth btn-sm me-2"><i class="fas fa-user-circle"></i> Profile</a>
+        <a href="/logout" class="action-btn-bth danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card-bth">
+          <div class="stat-icon-wrapper" style="background:#e0f2fe; color:#0369a1;">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="stat-val">{{ appointments.count }}</div>
+          <div class="stat-lab">Appointments</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card-bth">
+          <div class="stat-icon-wrapper" style="background:#dcfce7; color:#166534;">
+            <i class="fas fa-brain"></i>
+          </div>
+          <div class="stat-val">{{ predictions_count }}</div>
+          <div class="stat-lab">Scans Analyzed</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card-bth">
+          <div class="stat-icon-wrapper" style="background:#fef3c7; color:#92400e;">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="stat-val">{{ unread_notifications }}</div>
+          <div class="stat-lab">New Alerts</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card-bth">
+          <div class="stat-icon-wrapper" style="background:#f3e8ff; color:#6b21a8;">
+            <i class="fas fa-question-circle"></i>
+          </div>
+          <div class="stat-val">{{ pending_queries }}</div>
+          <div class="stat-lab">Active Queries</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="admin-card mb-4">
+      <div class="admin-card-header">
+        <h5><i class="fas fa-bolt me-2"></i> Quick Actions</h5>
+      </div>
+      <div class="admin-card-body">
+        <div class="quick-menu">
+          <a href="{% url 'check_mri' %}" class="menu-item-bth">
+            <i class="fas fa-file-medical" style="color:#0ea5e9"></i>
+            <span>New Brain Scan</span>
+          </a>
+          <a href="{% url 'prediction_history' %}" class="menu-item-bth">
+            <i class="fas fa-history" style="color:#22c55e"></i>
+            <span>My Scan History</span>
+          </a>
+          <a href="{% url 'user_queries' %}" class="menu-item-bth">
+            <i class="fas fa-user-md" style="color:#f59e0b"></i>
+            <span>Ask a Doctor</span>
+          </a>
+          <a href="{% url 'medical_history_edit' %}" class="menu-item-bth">
+            <i class="fas fa-folder-open" style="color:#ef4444"></i>
+            <span>Medical Record</span>
+          </a>
+          <a href="{% url 'notifications_list' %}" class="menu-item-bth">
+            <i class="fas fa-envelope-open-text" style="color:#8b5cf6"></i>
+            <span>Notifications</span>
+          </a>
+          <a href="{% url 'change_password' %}" class="menu-item-bth">
+            <i class="fas fa-key" style="color:#64748b"></i>
+            <span>Security</span>
+          </a>
+          <a href="{% url 'profile' %}" class="menu-item-bth">
+            <i class="fas fa-user-circle" style="color:#698cbd"></i>
+            <span>Profile</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <!-- Appointments Table -->
+      <div class="col-lg-8">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h5><i class="fas fa-calendar-alt me-2"></i> My Appointments</h5>
+          </div>
+          <div class="admin-card-body p-0">
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">Doctor</th>
+                    <th>Schedule</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for a in appointments %}
+                  <tr>
+                    <td class="ps-4">
+                      <div class="fw-bold text-main-bth">Dr. {{ a.doctor.name|default:a.doctor.username }}</div>
+                      <div class="text-muted small">{{ a.doctor.specialization }}</div>
+                    </td>
+                    <td>
+                      <div class="text-muted small">{{ a.appointment_datetime|date:"d M Y" }}</div>
+                      <div class="text-muted small">{{ a.appointment_datetime|time:"h:i A" }}</div>
+                    </td>
+                    <td>
+                      <span class="badge-status badge-{{ a.status }}">
+                        {{ a.get_status_display }}
+                      </span>
+                    </td>
+                    <td class="text-end pe-4">
+                      <a href="{% url 'appointment_detail' a.id %}" class="btn-ghost-bth btn-sm" title="View"><i
+                          class="fas fa-eye"></i></a>
+                      {% if a.status == 'confirmed' %}
+                      <a href="{% url 'create_payment' a.id %}" class="btn-ghost-bth btn-sm text-success"
+                        title="Pay Now"><i class="fas fa-wallet pe-1"></i> Pay</a>
+                      {% endif %}
+                      {% if a.status == 'completed' %}
+                      <a href="{% url 'submit_feedback' a.id %}" class="btn-ghost-bth btn-sm text-warning"
+                        title="Give Feedback"><i class="fas fa-star"></i></a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="4" class="text-center py-5 text-muted">
+                      No appointments found. <br><br>
+                      <a href="{% url 'prediction_history' %}" class="btn-ghost-bth btn-sm mt-2">Find a Doctor</a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar: Notifications & Queries -->
+      <div class="col-lg-4">
+        <!-- Notifications Feed -->
+        <div class="admin-card mb-4">
+          <div class="admin-card-header">
+            <h5><i class="fas fa-bell me-2"></i> Alerts</h5>
+            <a href="{% url 'notifications_list' %}" class="btn-ghost-bth btn-sm">View All</a>
+          </div>
+          <div class="admin-card-body">
+            {% for n in notifications %}
+            <div class="recent-item">
+              <div class="fw-bold text-main-bth">{{ n.title }}</div>
+              <div class="text-muted small">{{ n.message|truncatechars:100 }}</div>
+              <div class="mt-1 text-muted small"><i class="fas fa-clock"></i> {{ n.created_at|timesince }} ago</div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 text-muted">
+              <i class="fas fa-bell-slash fa-2x mb-2"></i>
+              <p class="mb-0">No new alerts.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Recent Queries -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h5><i class="fas fa-comments me-2"></i> Recent Queries</h5>
+            <a href="{% url 'user_queries' %}" class="btn-ghost-bth btn-sm">History</a>
+          </div>
+          <div class="admin-card-body">
+            {% for q in queries %}
+            <div class="recent-item">
+              <div class="fw-bold text-main-bth">To: Dr. {{ q.doctor.name|default:q.doctor.username }}</div>
+              <div class="text-muted small fst-italic">"{{ q.question|truncatechars:50 }}"</div>
+              <div class="mt-2">
+                {% if q.answer %}
+                <span class="text-success small fw-bold"><i class="fas fa-check-circle me-1"></i> Answered</span>
+                {% else %}
+                <span class="text-warning small fw-bold"><i class="fas fa-clock me-1"></i> Waiting for Reply</span>
+                {% endif %}
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 text-muted">
+              <p class="mb-0">No consultations sent.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

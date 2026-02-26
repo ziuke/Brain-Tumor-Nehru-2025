@@ -1,0 +1,21 @@
+/* ============================================================
+   Brain Tumour Hub — Scan History Styles
+   ============================================================ */
+
+.history-scan-thumbnail img {
+    border: 2px solid white;
+    transition: var(--transition);
+}
+
+.history-scan-thumbnail:hover img {
+    transform: scale(1.1);
+    box-shadow: var(--shadow);
+}
+
+.table tbody tr:hover {
+    background-color: #fbfcfe;
+}
+
+.progress {
+    background-color: #f1f5f9;
+}

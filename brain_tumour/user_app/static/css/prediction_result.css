@@ -1,0 +1,47 @@
+/* ============================================================
+   Brain Tumour Hub — Analysis Report Styles
+   ============================================================ */
+
+.scan-image-frame {
+    border: 1px solid var(--border);
+    background: #000;
+}
+
+.scan-image-frame img {
+    max-height: 500px;
+    width: 100%;
+    object-fit: contain;
+}
+
+.result-card-highlight {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.probability-bar-group {
+    margin-bottom: 12px;
+}
+
+.probability-bar-group .progress {
+    background-color: #f1f5f9;
+}
+
+@media print {
+
+    .header-btns,
+    .mt-4.pt-4,
+    .btn-ghost-bth,
+    footer {
+        display: none !important;
+    }
+
+    .admin-wrapper {
+        padding: 0 !important;
+    }
+
+    .admin-card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}

@@ -1,0 +1,33 @@
+{% include 'header.html' %}
+<div class="banner-w3l-main mt-5">
+  <div class="container">
+    <h2 class="text-white">Feedbacks</h2>
+    <div class="card p-3 mt-3">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Doctor</th>
+            <th>Section</th>
+            <th>Rating</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in feedbacks %}
+          <tr>
+            <td>{{ f.user.username }}</td>
+            <td>{{ f.doctor.username }}</td>
+            <td>{{ f.section }}</td>
+            <td>{{ f.rating }}</td>
+            <td>{{ f.comment }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5">No feedbacks.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

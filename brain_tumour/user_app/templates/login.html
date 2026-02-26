@@ -1,100 +1,59 @@
 {% load static %}
-
-{% block content %}
 {% include 'header.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
 
-<style>
-    .login-form input[type="text"], .login-form input[type="email"], .login-form input[type="password"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
+<div class="auth-page">
+    <div class="auth-card">
 
-    .login-form label {
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+        <!-- Logo -->
+        <div class="auth-logo">BH</div>
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-sub">Sign in to Brain Tumour Hub</p>
+        <hr class="auth-divider">
 
-    .login-form button[type="submit"] {
-        background-color: #2068a8;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    .login-form button[type="submit"]:hover {
-        background-color: #3c5973;
-    }
-
-    .alert-message {
-        margin-bottom: 15px;
-        padding: 10px;
-        border-radius: 5px;
-        font-size: 14px;
-    }
-
-    .alert-error {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-
-    .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-</style>
-
-<div class="banner-w3l-main">
-    <br>
-    <div class="container mt-5 mb-5 rounded">
-        <div class="row justify-content-center align-items-center min-vh-100 rounded">
-            <div class="col-lg-6 col-md-8 col-sm-12 rounded">
-                <div class="card p-4 shadow-sm rounded">
-                    <div class="card-body rounded">
-                        <h2 class="text-center mb-4"><b>Login</b></h2>
-
-                        {% if messages %}
-                                <div>
-                                    {% for message in messages %}
-                                        <div>
-                                            {{ message }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-
-                        <form class="login-form mb-5" action="" method="POST">
-                            {% csrf_token %}
-                            
-                            <!-- Display messages inside the form -->
-                           
-                            <!-- Render form fields -->
-                            {% for field in form %}
-                                <label class="req-field" for="{{ field.auto_id }}">{{ field.label }}</label>
-                                {{ field }}
-                            {% endfor %}
-                            
-                            <button type="submit">LOGIN</button>
-                            <br><br><br>
-                            <p class="text-center mt-2">
-                                {% comment %} <a href="/reset_password" id="forgot-password">Forgot Password?</a> {% endcomment %}
-                                <br>
-                                <a href="/user_register">Don't have an Account? Register here...</a>
-                            </p>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <!-- Error messages -->
+        {% for message in messages %}
+        <div class="auth-msg auth-msg-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ message }}
         </div>
+        {% endfor %}
+
+        <form method="POST" action="">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group-bth">
+                <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                <div class="input-icon-wrap">
+                    {% if field.name == 'username' %}
+                    <i class="fas fa-user fi"></i>
+                    {% elif field.name == 'password' %}
+                    <i class="fas fa-lock fi"></i>
+                    {% endif %}
+                    {{ field }}
+                </div>
+                {% if field.errors %}
+                <ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div style="text-align:right;margin-bottom:20px">
+                <a class="auth-link" href="/forgotpswd/">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-primary-bth">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+
+        <p class="auth-footer">
+            Don't have an account? <a class="auth-link" href="/user_register">Register here</a>
+        </p>
     </div>
 </div>
 
-{% endblock %}
 {% include 'footer.html' %}

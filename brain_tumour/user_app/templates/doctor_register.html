@@ -1,0 +1,152 @@
+{% load static %}
+{% include 'header.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+<style>
+    /* Custom overrides for Doctor Registration */
+    .auth-card {
+        max-width: 800px;
+    }
+
+    .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .two-col {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">BH</div>
+        <h1 class="auth-title">Doctor Portal</h1>
+        <p class="auth-sub">Join our medical network of specialists</p>
+        <hr class="auth-divider">
+
+        {% for message in messages %}
+        <div class="auth-msg auth-msg-{{ message.tags }}">
+            <i class="fas fa-info-circle"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        <form class="reg-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="two-col">
+                <div class="form-group-bth">
+                    <label for="{{ form.username.auto_id }}"><i class="fas fa-user-circle me-1"></i>Username*</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group-bth">
+                    <label for="{{ form.name.auto_id }}"><i class="fas fa-id-card me-1"></i>Full Name*</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<div class="text-danger small">{{ form.name.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="form-group-bth">
+                    <label for="{{ form.email.auto_id }}"><i class="fas fa-envelope me-1"></i>Email Address*</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group-bth">
+                    <label for="{{ form.phone.auto_id }}"><i class="fas fa-phone me-1"></i>Phone Number*</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}<div class="text-danger small">{{ form.phone.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="form-group-bth">
+                    <label for="{{ form.qualification.auto_id }}"><i
+                            class="fas fa-graduation-cap me-1"></i>Qualification*</label>
+                    {{ form.qualification }}
+                    {% if form.qualification.errors %}<div class="text-danger small">{{ form.qualification.errors.0 }}
+                    </div>{% endif %}
+                </div>
+                <div class="form-group-bth">
+                    <label for="{{ form.specialization.auto_id }}"><i
+                            class="fas fa-stethoscope me-1"></i>Specialization*</label>
+                    {{ form.specialization }}
+                    {% if form.specialization.errors %}<div class="text-danger small">{{ form.specialization.errors.0 }}
+                    </div>{% endif %}
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="form-group-bth">
+                    <label for="{{ form.experience.auto_id }}"><i class="fas fa-briefcase me-1"></i>Experience*</label>
+                    {{ form.experience }}
+                    {% if form.experience.errors %}<div class="text-danger small">{{ form.experience.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group-bth">
+                    <label for="{{ form.place.auto_id }}"><i class="fas fa-map-marker-alt me-1"></i>City/Place*</label>
+                    {{ form.place }}
+                    {% if form.place.errors %}<div class="text-danger small">{{ form.place.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="form-group-bth">
+                    <label for="{{ form.country.auto_id }}"><i class="fas fa-globe me-1"></i>Country*</label>
+                    {{ form.country }}
+                    {% if form.country.errors %}<div class="text-danger small">{{ form.country.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group-bth">
+                    <label for="{{ form.location.auto_id }}"><i class="fas fa-hospital me-1"></i>Clinic/Hospital
+                        Name*</label>
+                    {{ form.location }}
+                    {% if form.location.errors %}<div class="text-danger small">{{ form.location.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="form-group-bth">
+                <label><i class="fas fa-camera me-1"></i>Professional Photo</label>
+                <div class="file-upload-box">
+                    {{ form.image }}
+                    <p class="text-muted-bth" style="font-size:.82rem;margin:6px 0 0">Upload a professional portrait
+                        (JPG/PNG)</p>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="form-group-bth">
+                    <label for="{{ form.password.auto_id }}"><i class="fas fa-lock me-1"></i>Password*</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group-bth">
+                    <label for="{{ form.confirm_password.auto_id }}"><i class="fas fa-check-double me-1"></i>Confirm
+                        Password*</label>
+                    {{ form.confirm_password }}
+                    {% if form.confirm_password.errors %}<div class="text-danger small">{{ form.confirm_password.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="auth-msg auth-msg-error">
+                {% for e in form.non_field_errors %}<p style="margin:0">{{ e }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn-primary-bth mt-3">
+                <i class="fas fa-user-md me-2"></i> Submit Registration
+            </button>
+        </form>
+
+        <p class="auth-footer">
+            Already registered? <a class="auth-link" href="/login">Sign in here</a>
+        </p>
+    </div>
+</div>
+
+{% include 'footer.html' %}

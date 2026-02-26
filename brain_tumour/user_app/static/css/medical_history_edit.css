@@ -1,0 +1,26 @@
+/* ============================================================
+   Brain Tumour Hub — Medical History Edit Styles
+   ============================================================ */
+
+.form-control,
+.form-select {
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    background-color: #f8fafc !important;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    background-color: #fff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+}
+
+textarea.form-control {
+    min-height: 120px;
+}
+
+.info-card-slim {
+    background-color: #f8fafc;
+}

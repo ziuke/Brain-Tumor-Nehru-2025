@@ -1,0 +1,34 @@
+{% include 'header.html' %}
+<div class="banner-w3l-main mt-5">
+  <div class="container">
+    <h2 class="text-white">Manage Users</h2>
+    <div class="card p-3 mt-3">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.is_active }}</td>
+            <td>
+              <a class="btn btn-sm btn-warning" href="/admins/toggle/{{ u.id }}/">Toggle</a>
+              <a class="btn btn-sm btn-danger" href="/admins/delete/{{ u.id }}/">Delete</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4">No users.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

@@ -3,159 +3,229 @@
 {% block content %}
 {% include 'header.html' %}
 
-<link rel="stylesheet" href="{% static 'css/predict.css' %}">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+{% endblock %}
 
-<div class="banner-w3l-main">
-    <br><br><br>
-    <div class="container mt-5 mb-5">
+<div class="admin-wrapper">
+    <div class="container mt-4 mb-5">
         <div class="row justify-content-center">
             <div class="col-lg-10 col-md-12">
-                <div class="card shadow-sm rounded">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="text-center mb-0"><b>Prediction Result</b></h3>
+                <div class="admin-card mb-4">
+                    <div class="admin-card-header text-center py-4 bg-light">
+                        <h4 class="mb-0 fw-bold"><i class="fas fa-chart-pie me-2 text-primary"></i> <b>Prediction
+                                Result</b></h4>
                     </div>
-                    <div class="card-body p-4">
-                        
+                    <div class="admin-card-body p-4">
+
                         <!-- Messages -->
                         {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            {% endfor %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
                         {% endif %}
 
-                        <div class="row">
+                        <div class="row g-4">
                             <!-- Image Display -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5>Uploaded Scan</h5>
+                            <div class="col-md-6">
+                                <div class="border rounded p-4 text-center h-100" style="background-color: #f8fafc;">
+                                    <h6 class="text-muted mb-3 fw-bold small text-uppercase"><i
+                                            class="fas fa-image me-1"></i> Uploaded Scan</h6>
+                                    {% if prediction.uploaded_image %}
+                                    <div class="bg-white p-2 rounded shadow-sm d-inline-block">
+                                        <img src="{{ prediction.uploaded_image.url }}" alt="Brain Scan"
+                                            class="img-fluid rounded border"
+                                            style="max-height: 350px; width: auto; object-fit: contain;">
                                     </div>
-                                    <div class="card-body text-center">
-                                        {% if prediction.uploaded_image %}
-                                            <img src="{{ prediction.uploaded_image.url }}" 
-                                                 alt="Brain Scan" 
-                                                 class="img-fluid rounded"
-                                                 style="max-height: 400px; width: auto;">
-                                        {% else %}
-                                            <p class="text-muted">Image not available</p>
-                                        {% endif %}
+                                    {% else %}
+                                    <div class="py-5 text-muted bg-white rounded border">
+                                        <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="opacity: 0.3"></i>
+                                        <p class="mb-0">Image not available</p>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
 
                             <!-- Prediction Details -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5>Analysis Results</h5>
+                            <div class="col-md-6">
+                                <div class="border rounded p-4 h-100 bg-white">
+                                    <h5 class="fw-bold mb-4 border-bottom pb-3"><i
+                                            class="fas fa-poll-h me-2 text-info"></i> Analysis Results</h5>
+
+                                    <!-- Predicted Class -->
+                                    <div class="mb-4">
+                                        <h6 class="text-muted mb-2 small text-uppercase fw-bold">Predicted Class</h6>
+                                        <h3
+                                            class="text-primary mb-0 fw-bold d-inline-block px-3 py-2 bg-light rounded border border-primary border-opacity-25">
+                                            {{ class_display }}
+                                        </h3>
                                     </div>
-                                    <div class="card-body">
-                                        <!-- Predicted Class -->
-                                        <div class="mb-4">
-                                            <h6 class="text-muted mb-2">Predicted Class:</h6>
-                                            <h4 class="text-primary mb-0">
-                                                <strong>{{ class_display }}</strong>
-                                            </h4>
-                                        </div>
 
-                                        <!-- Confidence -->
-                                        <div class="mb-4">
-                                            <h6 class="text-muted mb-2">Confidence:</h6>
-                                            <div class="progress mb-2" style="height: 30px;">
-                                                <div class="progress-bar {% if confidence_percent >= 80 %}bg-success{% elif confidence_percent >= 60 %}bg-warning{% else %}bg-danger{% endif %}" 
-                                                     role="progressbar" 
-                                                     style="width: {{ confidence_percent }}%"
-                                                     aria-valuenow="{{ confidence_percent }}" 
-                                                     aria-valuemin="0" 
-                                                     aria-valuemax="100">
-                                                    <strong>{{ confidence_percent|floatformat:2 }}%</strong>
+                                    <!-- Confidence -->
+                                    <div class="mb-4">
+                                        <h6 class="text-muted mb-2 small text-uppercase fw-bold">Confidence</h6>
+                                        <div class="d-flex align-items-center bg-light p-3 rounded border">
+                                            <div class="progress flex-grow-1 me-3 bg-white"
+                                                style="height: 14px; border: 1px solid #e2e8f0;">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated {% if confidence_percent >= 80 %}bg-success{% elif confidence_percent >= 60 %}bg-warning{% else %}bg-danger{% endif %}"
+                                                    role="progressbar" style="width: {{ confidence_percent }}%">
+                                                </div>
+                                            </div>
+                                            <span
+                                                class="fw-bold fs-5 {% if confidence_percent >= 80 %}text-success{% elif confidence_percent >= 60 %}text-warning{% else %}text-danger{% endif %}">{{ confidence_percent|floatformat:1 }}%</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Upload Date -->
+                                    <div class="mb-4">
+                                        <h6 class="text-muted mb-1 small text-uppercase fw-bold">Analyzed On</h6>
+                                        <p class="mb-0 fw-bold text-dark"><i class="fas fa-clock me-1 text-muted"></i>
+                                            {{ prediction.uploaded_at|date:"F d, Y g:i A" }}</p>
+                                    </div>
+
+                                    <!-- All Probabilities -->
+                                    {% if all_probabilities_percent %}
+                                    <div class="mb-4 pt-3 border-top">
+                                        <h6 class="text-muted mb-3 small text-uppercase fw-bold">Probability
+                                            Distribution</h6>
+                                        {% for class_name, prob_percent in all_probabilities_percent.items %}
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between mb-1 small">
+                                                <span class="fw-bold text-dark">{{ class_name|title }}</span>
+                                                <span class="text-muted fw-bold">{{ prob_percent|floatformat:1 }}%</span>
+                                            </div>
+                                            <div class="progress" style="height: 8px; background-color: #f1f5f9;">
+                                                <div class="progress-bar rounded-pill
+                                                    {% if class_name == prediction.predicted_class %}bg-primary
+                                                    {% elif prob_percent > 20 %}bg-info
+                                                    {% else %}bg-secondary{% endif %}" role="progressbar"
+                                                    style="width: {{ prob_percent|floatformat:2 }}%">
                                                 </div>
                                             </div>
                                         </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
 
-                                        <!-- Upload Date -->
-                                        <div class="mb-4">
-                                            <h6 class="text-muted mb-2">Analyzed On:</h6>
-                                            <p class="mb-0">{{ prediction.uploaded_at|date:"F d, Y g:i A" }}</p>
-                                        </div>
+                                    <!-- Action Buttons -->
+                                    <div class="mt-4 pt-3 border-top d-flex gap-2 flex-wrap">
+                                        <a href="{% url 'check_mri' %}"
+                                            class="action-btn-bth btn-sm flex-fill text-center">
+                                            <i class="fas fa-upload me-1"></i> New Scan
+                                        </a>
+                                        <a href="{% url 'prediction_history' %}"
+                                            class="btn-ghost-bth btn-sm flex-fill text-center bg-light border">
+                                            <i class="fas fa-history me-1"></i> History
+                                        </a>
+                                        <a href="{% url 'delete_prediction' prediction.id %}"
+                                            class="btn-ghost-bth btn-sm flex-fill text-center text-danger border border-danger border-opacity-25"
+                                            onclick="return confirm('Delete this prediction?');">
+                                            <i class="fas fa-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                        <!-- All Probabilities -->
-                                        {% if all_probabilities_percent %}
-                                        <div class="mb-4">
-                                            <h6 class="text-muted mb-3">Probability Distribution:</h6>
-                                            {% for class_name, prob_percent in all_probabilities_percent.items %}
-                                            <div class="mb-2">
-                                                <div class="d-flex justify-content-between mb-1">
-                                                    <span><strong>{{ class_name|title }}:</strong></span>
-                                                    <span>{{ prob_percent|floatformat:2 }}%</span>
-                                                </div>
-                                                <div class="progress" style="height: 20px;">
-                                                    <div class="progress-bar 
-                                                        {% if class_name == prediction.predicted_class %}bg-primary
-                                                        {% elif prob_percent > 20 %}bg-info
-                                                        {% else %}bg-secondary{% endif %}" 
-                                                         role="progressbar" 
-                                                         style="width: {{ prob_percent|floatformat:2 }}%"
-                                                         aria-valuenow="{{ prob_percent|floatformat:2 }}" 
-                                                         aria-valuemin="0" 
-                                                         aria-valuemax="100">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {% endfor %}
-                                        </div>
-                                        {% endif %}
-
-                                        <!-- Action Buttons -->
-                                        <div class="mt-4">
-                                            <a href="{% url 'check_mri' %}" class="btn btn-primary me-2">
-                                                <i class="fas fa-upload"></i> Upload New Scan
-                                            </a>
-                                            <a href="{% url 'prediction_history' %}" class="btn btn-secondary me-2">
-                                                <i class="fas fa-history"></i> View History
-                                            </a>
-                                            <a href="{% url 'delete_prediction' prediction.id %}" 
-                                               class="btn btn-danger"
-                                               onclick="return confirm('Are you sure you want to delete this prediction? This action cannot be undone.');">
-                                                <i class="fas fa-trash"></i> Delete This Prediction
-                                            </a>
+                        <!-- Doctors and Info section -->
+                        <div class="row g-4 mt-1">
+                            <div class="col-lg-12">
+                                <div class="border rounded p-0 overflow-hidden shadow-sm">
+                                    <div class="bg-light p-3 border-bottom">
+                                        <h6 class="mb-0 fw-bold text-dark"><i
+                                                class="fas fa-user-md me-2 text-primary"></i> Recommended Doctors for {{ class_display }}</h6>
+                                    </div>
+                                    <div class="p-0">
+                                        <div class="table-responsive">
+                                            <table class="table mb-0 align-middle">
+                                                <thead class="bg-white">
+                                                    <tr>
+                                                        <th class="ps-4 text-muted small text-uppercase">Doctor</th>
+                                                        <th class="text-muted small text-uppercase">Specialization</th>
+                                                        <th class="text-muted small text-uppercase">Experience</th>
+                                                        <th class="text-end pe-4 text-muted small text-uppercase">Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for d in recommended_doctors %}
+                                                    <tr class="border-bottom">
+                                                        <td class="ps-4 fw-bold text-dark">Dr. {{ d.username }}</td>
+                                                        <td><span class="badge bg-light text-dark border px-2 py-1">{{ d.specialization }}</span></td>
+                                                        <td class="text-muted small fw-bold">{{ d.experience }}</td>
+                                                        <td class="text-end pe-4">
+                                                            <a class="action-btn-bth btn-sm px-4"
+                                                                href="/appointment/book/{{ d.id }}/{{ prediction.id }}/">Book
+                                                                Appointment</a>
+                                                        </td>
+                                                    </tr>
+                                                    {% empty %}
+                                                    <tr>
+                                                        <td colspan="4" class="text-center py-5 text-muted">
+                                                            <i class="fas fa-user-md fa-2x mb-2 text-light"></i><br>
+                                                            No recommendations available at this time.
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Additional Information -->
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <h5>About the Prediction</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h6>Understanding Your Results:</h6>
-                                        <ul>
-                                            {% if prediction.predicted_class == 'glioma' %}
-                                                <li><strong>Glioma:</strong> A type of tumor that occurs in the brain or spinal cord. Please consult with a medical professional for proper diagnosis and treatment.</li>
-                                            {% elif prediction.predicted_class == 'meningioma' %}
-                                                <li><strong>Meningioma:</strong> Tumors that arise from the meninges (membranes surrounding the brain). Most are benign, but consultation with a doctor is recommended.</li>
-                                            {% elif prediction.predicted_class == 'pituitary' %}
-                                                <li><strong>Pituitary Tumor:</strong> Tumors in the pituitary gland. These can affect hormone production and require medical attention.</li>
-                                            {% elif prediction.predicted_class == 'notumor' %}
-                                                <li><strong>No Tumor Detected:</strong> The scan appears to be normal with no tumor detected. However, this is not a substitute for professional medical diagnosis.</li>
-                                            {% endif %}
-                                        </ul>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6>Important Disclaimer:</h6>
-                                        <p class="text-muted">
-                                            This prediction is generated by an AI model and is for informational purposes only. 
-                                            It should <strong>NOT</strong> be considered as a medical diagnosis. Always consult with 
-                                            qualified healthcare professionals for accurate diagnosis and treatment recommendations.
-                                        </p>
+                        <div class="row g-4 mt-1">
+                            <div class="col-lg-12">
+                                <div class="border rounded p-4 bg-light shadow-sm">
+                                    <h6 class="fw-bold mb-4 border-bottom pb-3 text-dark"><i
+                                            class="fas fa-info-circle me-2 text-info"></i> About the Prediction</h6>
+                                    <div class="row g-4">
+                                        <div class="col-md-6">
+                                            <h6 class="fw-bold small text-muted text-uppercase mb-2"><i
+                                                    class="fas fa-book-medical me-1"></i> Understanding Your Results:
+                                            </h6>
+                                            <div class="p-3 bg-white rounded border border-white shadow-sm">
+                                                <p class="mb-0 small text-dark lh-lg">
+                                                    {% if prediction.predicted_class == 'glioma' %}
+                                                    <strong class="text-primary">Glioma:</strong> A type of tumor that
+                                                    occurs in the brain or spinal cord. Please consult with a medical
+                                                    professional for proper diagnosis and treatment.
+                                                    {% elif prediction.predicted_class == 'meningioma' %}
+                                                    <strong class="text-primary">Meningioma:</strong> Tumors that arise
+                                                    from the meninges (membranes surrounding the brain). Most are
+                                                    benign, but consultation with a doctor is recommended.
+                                                    {% elif prediction.predicted_class == 'pituitary' %}
+                                                    <strong class="text-primary">Pituitary Tumor:</strong> Tumors in the
+                                                    pituitary gland. These can affect hormone production and require
+                                                    medical attention.
+                                                    {% elif prediction.predicted_class == 'notumor' %}
+                                                    <strong class="text-success">No Tumor Detected:</strong> The scan
+                                                    appears to be normal with no tumor detected. However, this is not a
+                                                    substitute for professional medical diagnosis.
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="fw-bold small text-muted text-uppercase mb-2"><i
+                                                    class="fas fa-exclamation-triangle me-1"></i> Important Disclaimer:
+                                            </h6>
+                                            <div
+                                                class="p-3 bg-white rounded border border-warning border-opacity-25 shadow-sm h-100">
+                                                <p class="text-muted small mb-0 lh-lg">
+                                                    This prediction is generated by an AI model and is for informational
+                                                    purposes only.
+                                                    It should <strong class="text-danger fw-bold">NOT</strong> be
+                                                    considered as a medical diagnosis. Always consult with
+                                                    qualified healthcare professionals for accurate diagnosis and
+                                                    treatment recommendations.
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -170,4 +240,3 @@
 
 {% include 'footer.html' %}
 {% endblock %}
-

@@ -1,0 +1,87 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_approvals.css' %}">
+{% endblock %}
+
+<div class="page-wrapper">
+    <div class="container">
+        <div class="approval-header d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-clipboard-check me-2"></i> Doctor Verification</h2>
+                <p>Review and validate registration applications from medical professionals.</p>
+            </div>
+            <a href="{% url 'admin_dashboard' %}" class="btn-ghost-bth">
+                <i class="fas fa-arrow-left me-2"></i> Dashboard
+            </a>
+        </div>
+
+        {% if messages %}
+        {% for m in messages %}
+        <div class="flash-toast success mb-4">
+            <div class="toast-inner">
+                <i class="fas fa-check-circle"></i>
+                {{ m }}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if doctors %}
+        {% for d in doctors %}
+        <div class="approval-card">
+            <div class="row align-items-center">
+                <div class="col-md-auto">
+                    {% if d.image %}
+                    <img src="{{ d.image.url }}" alt="" class="doctor-avatar-approval">
+                    {% else %}
+                    <div class="doctor-placeholder-approval">{{ d.username|first|upper }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md ps-md-4 doc-info-section">
+                    <h5>Dr. {{ d.name|default:d.username }}</h5>
+                    <div class="doc-meta">
+                        <i class="far fa-envelope me-1"></i> {{ d.email }} &bull;
+                        <i class="fas fa-phone me-1 ms-2"></i> {{ d.phone }}
+                    </div>
+                    <div class="tag-container">
+                        <span class="doc-tag primary">{{ d.specialization }}</span>
+                        <span class="doc-tag">{{ d.qualification }}</span>
+                        <span class="doc-tag">{{ d.experience }} Practice</span>
+                        {% if d.place %}
+                        <span class="doc-tag"><i class="fas fa-map-marker-alt me-1"></i>{{ d.place }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-auto mt-3 mt-md-0">
+                    <div class="approval-actions">
+                        <form method="post" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="doctor_id" value="{{ d.id }}">
+                            <button name="action" value="approve" class="btn-primary-bth">
+                                <i class="fas fa-check-circle me-2"></i> Approve Access
+                            </button>
+                        </form>
+                        <a href="/reject_reason/{{ d.id }}" class="action-btn-bth danger">
+                            <i class="fas fa-times-circle me-1"></i> Reject
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-check-double fa-4x text-success opacity-25"></i>
+            </div>
+            <h3 class="fw-bold text-main-bth">Queue is Clear</h3>
+            <p class="text-muted">There are no pending doctor registration requests at this time.</p>
+            <a href="{% url 'admin_doctor_list' %}" class="btn-ghost-bth mt-3">
+                View Staff Members
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% include 'footer.html' %}

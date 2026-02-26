@@ -1,65 +1,64 @@
-{% load static %}
-
-{% block content %}
 {% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/update_form.css' %}">
+{% endblock %}
 
-    <div class="register-container"> 
-        <form class="Reg-form" method="POST" enctype="multipart/form-data"> 
-            <h2>Register</h2> 
-             
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="{{ form.username.id_for_label }}">Email:</label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                    <div class="error">
-                        {{ form.email.errors }}
-                    </div>
-                {% endif %}
+<div class="page-wrapper">
+    <div class="container">
+        <div class="form-card">
+            <div class="form-card-header">
+                <h4><i class="fas fa-user-edit"></i> Edit Profile</h4>
+                <p>Update your personal information and profile picture.</p>
             </div>
-
-            <div class="form-group">
-                <label for="{{ form.password.id_for_label }}">Phone:</label>
-                {{ form.phone }}
-                {% if form.phone.errors %}
-                    <div class="error">
-                        {{ form.phone.errors }}
+            <div class="form-card-body">
+                {% if messages %}
+                {% for m in messages %}
+                <div class="flash-toast success">
+                    <div class="toast-inner">
+                        <i class="fas fa-check-circle"></i>
+                        {{ m }}
                     </div>
-                {% endif %}
-            </div>
-
-            <div class="form-group">
-                <label for="{{ form.email.id_for_label }}">Place:</label>
-                {{ form.place }}
-                {% if form.place.errors %}
-                    <div class="error">
-                        {{ form.place.errors }}
-                    </div>
-                {% endif %}
-            </div>
-
-
-            <div class="form-group">
-                <label for="{{ form.image.id_for_label }}">Image:</label>
-                {% if form.instance.image %}  {# assuming image is your image field #}
-                    <img src="{{ form.instance.image.url }}" alt="image" class="resized-image">
-                {% endif %}
-                <div class="image-field">
-                    <input type="file" name="{{ form.image.name }}" id="{{ form.image.id_for_label }}">
                 </div>
-                {% if form.image.errors %}
-                    <div class="error">
-                        {{ form.image.errors }}
-                    </div> 
+                {% endfor %}
                 {% endif %}
-            </div>
-            <br>
-            <button type="submit">UPDATE</button> 
-        </form>
-    </div>
-</body>
-</html>
 
-{% endblock  %}
+                <div class="profile-preview">
+                    {% if request.user.image %}
+                    <img src="{{ request.user.image.url }}" alt="" class="preview-img">
+                    {% else %}
+                    <div class="preview-placeholder">{{ request.user.username|first|upper }}</div>
+                    {% endif %}
+                    <div class="fw-bold text-main-bth">@{{ request.user.username }}</div>
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="form-group-bth">
+                        <label>{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="error-msg-bth mt-2">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+                            {{ field.errors|join:", " }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn-primary-bth w-100 py-3 mt-4">
+                        <i class="fas fa-save me-2"></i> Save Changes
+                    </button>
+
+                    <div class="text-center mt-4">
+                        <a href="{% url 'profile' %}" class="back-link">
+                            <i class="fas fa-arrow-left"></i> Back to Profile
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% include 'footer.html' %}

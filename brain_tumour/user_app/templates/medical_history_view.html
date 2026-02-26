@@ -1,0 +1,101 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+{% endblock %}
+
+<div class="admin-wrapper">
+  <div class="container mt-4 mb-5" style="max-width: 800px;">
+
+    <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="mb-1 fw-bold text-dark"><i class="fas fa-file-medical me-2 text-primary"></i> Patient Medical History
+        </h3>
+        <p class="text-muted mb-0 fw-bold">{{ patient.name|default:patient.username }}</p>
+      </div>
+      <a href="javascript:history.back()" class="btn-ghost-bth btn-sm"><i class="fas fa-arrow-left me-1"></i> Back</a>
+    </div>
+
+    <div class="admin-card shadow-sm border-0 mb-4">
+      <div class="admin-card-header bg-light border-bottom p-4">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Name</span>
+            <div class="text-dark fw-bold fs-6">{{ patient.name|default:patient.username }}</div>
+          </div>
+          <div class="col-md-4">
+            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Email</span>
+            <div class="text-dark fs-6">{{ patient.email }}</div>
+          </div>
+          <div class="col-md-4">
+            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Phone</span>
+            <div class="text-dark fs-6">{{ patient.phone|default:"N/A" }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card-body p-4">
+        {% if history %}
+        <div class="border rounded p-4 bg-white shadow-sm mb-4 border-start border-primary border-4">
+          <h6 class="text-muted small text-uppercase fw-bold mb-2">Medical Summary</h6>
+          <p class="text-dark fs-6 mb-0">{{ history.summary|default:"No summary provided." }}</p>
+        </div>
+
+        <div class="border rounded p-4 bg-white shadow-sm mb-4 border-start border-warning border-4">
+          <h6 class="text-muted small text-uppercase fw-bold mb-2">Known Allergies</h6>
+          <p class="text-dark fs-6 mb-0">{{ history.allergies|default:"None reported." }}</p>
+        </div>
+
+        <div class="border rounded p-4 bg-white shadow-sm mb-4 border-start border-info border-4">
+          <h6 class="text-muted small text-uppercase fw-bold mb-2">Current Medications</h6>
+          <p class="text-dark fs-6 mb-0">{{ history.medications|default:"None reported." }}</p>
+        </div>
+
+        <div class="text-end">
+          <span class="text-muted small"><i class="fas fa-clock me-1"></i> Last updated: {{ history.updated_at|date:"d M Y, h:i A" }}</span>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+          <i class="fas fa-file-medical fa-4x mb-3 text-muted" style="opacity: 0.3;"></i>
+          <p class="text-muted fw-bold">This patient has not added any medical history yet.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Prediction Reports -->
+    <div class="admin-card shadow-sm border-0">
+      <div class="admin-card-header bg-light border-bottom p-4">
+        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-brain me-2 text-primary"></i> Scan Predictions History</h5>
+      </div>
+      <div class="admin-card-body p-0">
+        <div class="list-group list-group-flush">
+          {% for pred in patient.predictions.all|slice:":5" %}
+          <div class="list-group-item p-4 d-flex justify-content-between align-items-center bg-white border-bottom">
+            <div>
+              <h6 class="mb-1 fw-bold text-dark">{{ pred.predicted_class|title }}</h6>
+              <small class="text-muted fw-bold"><i class="fas fa-calendar-alt me-1"></i> {{ pred.uploaded_at|date:"d M Y" }}</small>
+            </div>
+            <div class="text-end">
+              <span
+                class="badge {% if pred.confidence >= 80 %}bg-success{% elif pred.confidence >= 60 %}bg-warning{% else %}bg-danger{% endif %} rounded-pill px-3 py-2 shadow-sm">
+                {{ pred.confidence|floatformat:1 }}% Confidence
+              </span>
+            </div>
+          </div>
+          {% empty %}
+          <div class="p-5 text-center">
+            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3 text-muted"
+              style="width: 80px; height: 80px;">
+              <i class="fas fa-history fa-2x"></i>
+            </div>
+            <p class="text-muted mb-0 fw-bold">No scan predictions on record.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% include 'footer.html' %}

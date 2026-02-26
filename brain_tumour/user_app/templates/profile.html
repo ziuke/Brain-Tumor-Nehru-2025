@@ -1,29 +1,107 @@
-{% load static %} 
 {% include 'header.html' %}
-{% block content %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
 
-    <div class="register-container" style="height: 100vh;">
-        <div class="profile-info p-3 mt-3">
-            <div class="image">
-                <div class="trick">
-                    {% if user.image %}
-                        <img src="{{ user.image.url }}" alt="Profile Image" style="width: 150px; height: 150px; border-radius: 80px;">
-                    {% else %}
-                        <img src="{% static 'images/default.png' %}" alt="Default Profile Image" style="width: 150px; height: 150px; border-radius: 80px;">
+<div class="page-wrapper">
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-header">
+                {% if user.image %}
+                <img src="{{ user.image.url }}" alt="" class="profile-avatar">
+                {% else %}
+                <div class="profile-avatar-placeholder">{{ user.username|first|upper }}</div>
+                {% endif %}
+                <h3>{{ user.name|default:user.username }}</h3>
+                <div class="profile-role">
+                    {% if user.usertype == 2 %}Doctor ({{ user.specialization }})
+                    {% elif user.usertype == 1 %}Patient
+                    {% elif user.is_staff %}Administrator
+                    {% else %}User{% endif %}
+                </div>
+                <div class="profile-username">@{{ user.username }}</div>
+            </div>
+
+            <div class="profile-body">
+                <h6 class="info-section-title">Personal Information</h6>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value">{{ user.name|default:"—" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value">{{ user.email }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Phone Number</div>
+                        <div class="info-value">{{ user.phone|default:"—" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Location (Place)</div>
+                        <div class="info-value">{{ user.place|default:"—" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Country</div>
+                        <div class="info-value">{{ user.country|default:"—" }}</div>
+                    </div>
+                </div>
+
+                {% if user.usertype == 2 %}
+                <h6 class="info-section-title">Professional Details</h6>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Specialization</div>
+                        <div class="info-value">{{ user.specialization|default:"—" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Qualification</div>
+                        <div class="info-value">{{ user.qualification|default:"—" }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Experience</div>
+                        <div class="info-value">{{ user.experience|default:"—" }}</div>
+                    </div>
+                    {% if user.doctor_profile %}
+                    <div class="info-item">
+                        <div class="info-label">Consultation Fee</div>
+                        <div class="info-value">₹{{ user.doctor_profile.consultation_fee }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Consultation Mode</div>
+                        <div class="info-value">{{ user.doctor_profile.consultation_mode }}</div>
+                    </div>
                     {% endif %}
                 </div>
+                {% endif %}
+
+                <div class="profile-actions">
+                    <a href="/edit_profile" class="action-btn-bth primary"><i class="fas fa-user-edit"></i> Edit
+                        Profile</a>
+                    <a href="{% url 'change_password' %}" class="action-btn-bth"><i class="fas fa-lock"></i> Change
+                        Password</a>
+
+                    {% if user.usertype == 1 %}
+                    <a href="{% url 'medical_history_edit' %}" class="action-btn-bth"><i
+                            class="fas fa-file-medical"></i> Medical History</a>
+                    <a href="{% url 'user_dashboard' %}" class="action-btn-bth"><i class="fas fa-tachometer-alt"></i>
+                        Dashboard</a>
+                    {% elif user.usertype == 2 %}
+                    <a href="{% url 'doctor_profile_edit' %}" class="action-btn-bth"><i class="fas fa-stethoscope"></i>
+                        Practice Settings</a>
+                    <a href="{% url 'doctor_dashboard' %}" class="action-btn-bth"><i class="fas fa-tachometer-alt"></i>
+                        Dashboard</a>
+                    {% elif user.is_staff %}
+                    <a href="{% url 'admin_dashboard' %}" class="action-btn-bth"><i class="fas fa-tachometer-alt"></i>
+                        Admin Dashboard</a>
+                    {% endif %}
+
+                    <a href="/logout" class="action-btn-bth danger ms-auto"><i class="fas fa-sign-out-alt"></i>
+                        Logout</a>
+                </div>
             </div>
-            <hr style="margin-top: 70px;">
-            <div class="col-md-12 justify-content-center">
-                <p style="margin-left: 160px; margin-top: 40px;"><strong> {{ user.username }} </strong></p>
-                <p><strong>Email Address:</strong> {{ user.email }}</p>
-                <p><strong>Phone:</strong> {{ user.phone }}</p>
-                <p><strong>Place:</strong> {{ user.place }}</p>
-            </div>
-            <button type="submit" style="width: 200px;  margin-left: 100px;" class="mt-4 btn-success"><a href="/edit_profile">UPDATE</a></button> <br>
-            <a href="/password_change_form" id="forgot-password"style="margin-left: 140px;">Reset Password</a>
         </div>
     </div>
-
-{% endblock  %}
+</div>
 {% include 'footer.html' %}

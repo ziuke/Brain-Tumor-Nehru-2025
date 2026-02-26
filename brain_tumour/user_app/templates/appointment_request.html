@@ -1,0 +1,133 @@
+{% include 'header.html' %}
+<style>
+  .page-wrapper {
+    padding: 100px 0 60px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+  }
+
+  .form-card {
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 680px;
+    margin: 0 auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  .form-card-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 28px 32px;
+  }
+
+  .form-card-body {
+    padding: 32px;
+  }
+
+  .form-control {
+    background: #f8f9fa !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #333 !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+  }
+
+  .form-control:focus {
+    border-color: #00bcd4 !important;
+    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1) !important;
+    background: #fff !important;
+  }
+
+  label {
+    color: #475569;
+    font-size: .85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  select {
+    background: #f8f9fa !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #333 !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+  }
+
+  select option {
+    background: #ffffff;
+  }
+
+  .doctor-card {
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+</style>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-card-header">
+        <h3 style="color:#1e293b;font-weight:700;margin:0"><i class="fas fa-calendar-plus me-2 text-primary"></i>Book
+          Appointment
+        </h3>
+        <p class="text-muted" style="margin:8px 0 0">Request an appointment with your doctor.</p>
+      </div>
+      <div class="form-card-body">
+        <!-- Doctor Info -->
+        <div class="doctor-card mb-4 border-0 shadow-sm" style="background: white;">
+          <div class="d-flex align-items-center gap-3">
+            {% if doctor.image %}
+            <img src="{{ doctor.image.url }}" alt=""
+              style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid rgba(0,188,212,0.4)">
+            {% else %}
+            <div
+              style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#00bcd4,#0097a7);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;font-weight:700">
+              {{ doctor.username|first|upper }}</div>
+            {% endif %}
+            <div>
+              <h5 style="color:#1e293b;font-weight:700;margin:0">Dr. {{ doctor.name|default:doctor.username }}</h5>
+              <div style="color:#00bcd4;font-size:.9rem;font-weight:600;">{{ doctor.specialization }}</div>
+              <div class="text-muted" style="font-size:.82rem">{{ doctor.qualification }} &bull; {{ doctor.experience }}
+              </div>
+              {% if doctor.doctor_profile %}
+              <div style="color:#10b981;font-size:.85rem;margin-top:4px;font-weight:600;">Fee: ₹ {{ doctor.doctor_profile.consultation_fee }} per session</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {% if prediction %}
+        <div class="mb-4 p-3 bg-light" style="border-radius:12px;border-left:4px solid #00bcd4">
+          <small class="text-muted fw-bold text-uppercase">Based on your scan prediction:</small>
+          <div style="color:#1e293b;font-weight:700;font-size:1.1rem" class="mt-1">{{ prediction.predicted_class|title }}</div>
+        </div>
+        {% endif %}
+
+        <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="mb-4">
+            <label>{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<small class="text-muted mt-1 d-block">{{ field.help_text }}</small>{% endif %}
+            {% if field.errors %}<div class="text-danger" style="font-size:.82rem;margin-top:6px">{{ field.errors|join:", " }}
+            </div>{% endif %}
+          </div>
+          {% endfor %}
+          <button type="submit" class="btn w-100 mt-2 shadow-sm"
+            style="background:linear-gradient(135deg,#00bcd4,#0097a7);color:#fff;border-radius:10px;padding:12px;font-size:1rem;font-weight:600;border:none;transition:all 0.3s;">
+            <i class="fas fa-calendar-check me-2"></i>Send Appointment Request
+          </button>
+          <a href="javascript:history.back()" class="btn btn-light w-100 mt-3"
+            style="border-radius:10px;color:#475569;font-weight:600; border: 1px solid #e2e8f0;">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

@@ -1,0 +1,135 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_reports.css' %}">
+{% endblock %}
+
+<div class="page-wrapper">
+    <div class="container">
+        <div class="reports-header d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-chart-pie me-2"></i> Operational Intelligence</h2>
+                <p>Comprehensive analytics on appointments, performance, and platform revenue.</p>
+            </div>
+            <a href="{% url 'admin_dashboard' %}" class="btn-ghost-bth">
+                <i class="fas fa-arrow-left me-2"></i> Dashboard
+            </a>
+        </div>
+
+        <!-- Month Stats -->
+        <div class="stat-grid-reports">
+            <div class="stat-box-bth">
+                <div class="val text-primary">{{ monthly_stats.total|default:0 }}</div>
+                <div class="lbl">Total Appointments</div>
+            </div>
+            <div class="stat-box-bth">
+                <div class="val text-success">{{ monthly_stats.completed|default:0 }}</div>
+                <div class="lbl">Completed Missions</div>
+            </div>
+            <div class="stat-box-bth">
+                <div class="val text-warning">{{ monthly_stats.pending|default:0 }}</div>
+                <div class="lbl">Pending Requests</div>
+            </div>
+            <div class="stat-box-bth">
+                <div class="val text-info">₹{{ monthly_stats.revenue|default:0 }}</div>
+                <div class="lbl">Estimated Revenue</div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Monthly Breakdown -->
+            <div class="col-lg-8">
+                <div class="reports-card h-100">
+                    <div class="reports-card-header">
+                        <h5><i class="fas fa-history"></i> Monthly Performance Trend</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-bth mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="ps-4">Reporting Month</th>
+                                        <th class="text-center">Total</th>
+                                        <th class="text-center">Success Rate</th>
+                                        <th class="text-center">Revenue</th>
+                                        <th class="pe-4" style="width: 200px;">Volume Chart</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in monthly_data %}
+                                    <tr>
+                                        <td class="ps-4 fw-bold">{{ row.month }}</td>
+                                        <td class="text-center">{{ row.total }}</td>
+                                        <td class="text-center">
+                                            <span class="badge-status badge-active">{{ row.completed }} Done</span>
+                                        </td>
+                                        <td class="text-center fw-bold">₹{{ row.revenue }}</td>
+                                        <td class="pe-4">
+                                            <div class="bar-container">
+                                                <div class="bar-progress bg-primary"
+                                                    style="width:{{ row.pct|default:0 }}%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5 text-muted">
+                                            No historical data available for reporting yet.
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Cards -->
+            <div class="col-lg-4">
+                <div class="reports-card border-0 shadow-sm mb-4">
+                    <div class="reports-card-header bg-white">
+                        <h5><i class="fas fa-user-md text-primary"></i> Leading Doctors</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for d in top_doctors %}
+                        <div class="top-doc-item">
+                            <div class="top-doc-info">
+                                <span class="top-doc-name">Dr. {{ d.doctor__name|default:d.doctor__username }}</span>
+                                <span class="top-doc-count">{{ d.count }} Books</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar-progress bg-success" style="width:{{ d.pct|default:0 }}%"></div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4 text-muted">No professional data yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="reports-card border-0 shadow-sm">
+                    <div class="reports-card-header bg-white">
+                        <h5><i class="fas fa-tasks text-warning"></i> Status Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for s in status_breakdown %}
+                        <div class="top-doc-item">
+                            <div class="top-doc-info">
+                                <span class="small fw-bold text-uppercase">{{ s.status|title }}</span>
+                                <span class="small fw-bold text-muted">{{ s.count }} Cases</span>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar-progress bg-warning" style="width:{{ s.pct|default:0 }}%"></div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4 text-muted">No distribution data.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.html' %}

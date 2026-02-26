@@ -1,0 +1,27 @@
+/* ============================================================
+   Brain Tumour Hub — Notifications Styles
+   ============================================================ */
+
+.bg-light-stripe {
+    background: rgba(0, 188, 212, 0.02);
+}
+
+.notif-row {
+    transition: all 0.2s ease;
+}
+
+.notif-row:hover {
+    background: #f8fafc;
+}
+
+.notif-dot-wrapper {
+    flex-shrink: 0;
+}
+
+.notif-icon-circle {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.notif-actions .dropdown-toggle::after {
+    display: none;
+}

@@ -1,0 +1,30 @@
+/* ============================================================
+   Brain Tumour Hub — Doctor Answer Query Styles
+   ============================================================ */
+
+.form-control {
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    background-color: #f8fafc !important;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    background-color: #fff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+}
+
+.patient-query-context {
+    background-color: #f8fafc;
+}
+
+.border-info {
+    border-color: #0ea5e9 !important;
+}
+
+.italic {
+    font-style: italic;
+}

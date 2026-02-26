@@ -1,0 +1,131 @@
+{% include 'header.html' %}
+<style>
+  .page-wrapper {
+    padding: 100px 0 60px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+  }
+
+  .section-card {
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+
+  .section-card .card-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 20px 24px;
+  }
+
+  .section-card .card-header h5 {
+    color: #1e293b;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .section-card .card-body {
+    padding: 24px;
+  }
+
+  .query-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s;
+  }
+
+  .query-item:hover {
+    border-color: rgba(0, 188, 212, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.08);
+  }
+</style>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 style="color:#1e293b;font-weight:800;letter-spacing:-0.5px;"><i
+            class="fas fa-question-circle text-primary me-2"></i>Patient Queries</h2>
+        <p class="text-muted fw-semibold mb-0">Review and reply to questions from your patients.</p>
+      </div>
+      <a href="/doctor/dashboard" class="btn btn-light shadow-sm border text-dark fw-bold"
+        style="border-radius: 10px;"><i class="fas fa-arrow-left me-2"></i>Dashboard</a>
+    </div>
+
+    {% if messages %}{% for m in messages %}
+    <div class="alert shadow-sm fw-bold border-0"
+      style="background:#f1faff;border-left:4px solid #00bcd4;color:#0369a1;border-radius:8px;padding:16px;">
+      <i class="fas fa-info-circle me-2"></i>{{ m }}
+    </div>
+    {% endfor %}{% endif %}
+
+    <div class="section-card">
+      <div class="card-header">
+        <h5><i class="fas fa-list text-primary me-2"></i>All Queries ({{ queries.count }})</h5>
+      </div>
+      <div class="card-body bg-light">
+        {% for q in queries %}
+        <div class="query-item">
+          <div class="d-flex justify-content-between align-items-start mb-3 border-bottom pb-3">
+            <div>
+              <span style="color:#1e293b;font-weight:800;font-size:1.05rem;">{{ q.patient.name|default:q.patient.username }}</span>
+              <small class="text-muted fw-bold ms-2">{{ q.patient.email }}</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <small class="text-muted fw-semibold me-2"><i class="fas fa-clock me-1"></i>{{ q.created_at|date:"d M Y, h:i A" }}</small>
+              {% if q.answer %}
+              <span class="badge shadow-sm"
+                style="background:#10b981;color:#fff;border-radius:20px;padding:5px 12px;font-size:.78rem;font-weight:700;">Replied</span>
+              {% else %}
+              <span class="badge shadow-sm"
+                style="background:#f59e0b;color:#fff;border-radius:20px;padding:5px 12px;font-size:.78rem;font-weight:700;">Pending</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <span class="fw-bold text-muted small text-uppercase mb-1 d-block">Question</span>
+            <p style="color:#334155;font-weight:500;font-size:1.05rem;margin-bottom:0;line-height:1.6;">{{ q.question }}
+            </p>
+          </div>
+
+          {% if q.answer %}
+          <div class="shadow-sm"
+            style="background:#f8f9fa;border-left:4px solid #10b981;border-radius:8px;padding:16px; margin-bottom:12px;">
+            <small style="color:#10b981;font-weight:800;font-size:0.8rem;text-transform:uppercase;"><i
+                class="fas fa-reply me-2"></i>Your Reply</small>
+            <p style="color:#1e293b;font-weight:500;margin:6px 0 0;line-height:1.6;">{{ q.answer }}</p>
+          </div>
+          <div class="text-end mt-3">
+            <a href="/doctor/queries/answer/{{ q.id }}/"
+              class="btn btn-sm btn-outline-primary fw-bold px-3 py-2 shadow-sm" style="border-radius:8px;"><i
+                class="fas fa-edit me-2"></i>Edit Reply</a>
+          </div>
+          {% else %}
+          <div class="text-end mt-3">
+            <a href="/doctor/queries/answer/{{ q.id }}/" class="btn btn-sm shadow-sm"
+              style="background:linear-gradient(135deg,#00bcd4,#0097a7);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-weight:700;">
+              <i class="fas fa-reply me-2"></i>Reply Now
+            </a>
+          </div>
+          {% endif %}
+        </div>
+        {% empty %}
+        <div class="text-center py-5 bg-white rounded border shadow-sm">
+          <i class="fas fa-inbox fa-4x mb-3 text-muted" style="opacity: 0.5;"></i>
+          <h5 class="fw-bold text-dark">No patient queries yet.</h5>
+          <p class="text-muted">When patients ask questions, they will appear here.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

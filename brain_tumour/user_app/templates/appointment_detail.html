@@ -1,0 +1,540 @@
+{% include 'header.html' %}
+<style>
+  .page-wrapper {
+    padding: 100px 0 60px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+  }
+
+  .chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 480px;
+    background: #f1f5f9;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+  }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .chat-body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .chat-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 188, 212, 0.4);
+    border-radius: 4px;
+  }
+
+  .msg-bubble {
+    max-width: 75%;
+    padding: 12px 18px;
+    border-radius: 16px;
+    font-size: .95rem;
+    line-height: 1.5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+
+  .msg-mine {
+    background: linear-gradient(135deg, #00bcd4, #0097a7);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+
+  .msg-other {
+    background: #ffffff;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 4px;
+  }
+
+  .msg-time {
+    font-size: .72rem;
+    opacity: .7;
+    margin-top: 6px;
+    display: block;
+  }
+
+  .chat-footer {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    padding: 16px 20px;
+  }
+
+  .chat-input {
+    background: #f8f9fa !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+  }
+
+  .chat-input:focus {
+    background: #ffffff !important;
+    border-color: #00bcd4 !important;
+    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1) !important;
+  }
+
+  .section-card {
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+
+  .section-card .card-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 20px 24px;
+  }
+
+  .section-card .card-header h5 {
+    color: #1e293b;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .section-card .card-body {
+    padding: 24px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    color: #64748b;
+    font-size: .88rem;
+    font-weight: 600;
+  }
+
+  .info-value {
+    color: #1e293b;
+    font-size: .9rem;
+    font-weight: 700;
+  }
+
+  .doc-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s;
+  }
+
+  .doc-item:hover {
+    border-color: rgba(0, 188, 212, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 188, 212, 0.05);
+  }
+
+  .doc-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(0, 188, 212, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00bcd4;
+    font-size: 1.2rem;
+  }
+
+  .badge-status {
+    border-radius: 30px;
+    padding: 6px 16px;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .form-control-light {
+    background: #f8f9fa !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+  }
+
+  .form-control-light:focus {
+    background: #ffffff !important;
+    border-color: #00bcd4 !important;
+    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1) !important;
+  }
+</style>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 style="color:#1e293b;font-weight:800;letter-spacing:-0.5px;"><i
+            class="fas fa-calendar-check me-2 text-primary"></i>Appointment Details</h2>
+        <p class="text-muted fw-bold mb-0">Booking #{{ appointment.id }}</p>
+      </div>
+      <div>
+        <a href="javascript:history.back()" class="btn btn-light shadow-sm"
+          style="border-radius: 10px; font-weight: 600; color: #475569; border: 1px solid #e2e8f0;"><i
+            class="fas fa-arrow-left me-2"></i>Back</a>
+      </div>
+    </div>
+
+    {% if messages %}{% for m in messages %}
+    <div class="alert shadow-sm fw-bold border-0"
+      style="background:#f1faff;border-left:4px solid #00bcd4 !important;color:#0369a1;border-radius:8px;padding:16px;margin-bottom:20px;">
+      <i class="fas fa-info-circle me-2"></i>{{ m }}
+    </div>
+    {% endfor %}{% endif %}
+
+    <div class="row">
+      <!-- Left Column: Info + Chat -->
+      <div class="col-lg-8">
+
+        <!-- Appointment Info -->
+        <div class="section-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-id-card text-primary me-2"></i>Appointment Summary</h5>
+            <span class="badge badge-status
+              {% if appointment.status == 'confirmed' %}bg-success text-white shadow-sm
+              {% elif appointment.status == 'rejected' %}bg-danger text-white shadow-sm
+              {% elif appointment.status == 'completed' %}bg-info text-white shadow-sm
+              {% elif appointment.status == 'cancelled' %}bg-secondary text-white shadow-sm
+              {% else %}bg-warning text-dark shadow-sm{% endif %}">{{ appointment.get_status_display }}</span>
+          </div>
+          <div class="card-body">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="info-row"><span class="info-label">Patient</span><span class="info-value">{{ appointment.patient.name|default:appointment.patient.username }}</span></div>
+                <div class="info-row"><span class="info-label">Doctor</span><span class="info-value">Dr. {{ appointment.doctor.name|default:appointment.doctor.username }}</span></div>
+                <div class="info-row"><span class="info-label">Specialization</span><span class="info-value text-primary">{{ appointment.doctor.specialization }}</span></div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-row"><span class="info-label">Date & Time</span><span class="info-value">{{ appointment.appointment_datetime|date:"d M Y, h:i A" }}</span></div>
+                <div class="info-row"><span class="info-label">Predicted Class</span><span class="info-value fw-bold" style="color:#00bcd4">{{ appointment.predicted_class|title|default:"—" }}</span></div>
+                <div class="info-row"><span class="info-label">Booked On</span><span class="info-value text-muted">{{ appointment.created_at|date:"d M Y" }}</span></div>
+              </div>
+            </div>
+
+            {% if appointment.reason %}
+            <div class="mt-4 p-4 bg-light shadow-sm" style="border-radius:12px;border-left:4px solid #00bcd4">
+              <div class="info-label mb-2 text-uppercase" style="font-size: 0.8rem;">Reason for Visit / Notes</div>
+              <div class="text-dark fw-semibold" style="line-height: 1.6;">{{ appointment.reason }}</div>
+            </div>
+            {% endif %}
+
+            <!-- Doctor Actions -->
+            {% if request.session.ut == 2 and appointment.status == 'requested' %}
+            <div class="mt-4 pt-3 border-top d-flex gap-2 flex-wrap">
+              <a href="/appointment/{{ appointment.id }}/status/confirmed/" class="btn btn-success fw-bold shadow-sm"
+                style="border-radius:10px; padding: 10px 24px;"><i class="fas fa-check me-2"></i>Confirm</a>
+              <a href="/appointment/{{ appointment.id }}/status/rejected/" class="btn btn-danger fw-bold shadow-sm"
+                style="border-radius:10px; padding: 10px 24px;"><i class="fas fa-times me-2"></i>Reject</a>
+              <a href="/appointment/{{ appointment.id }}/status/rescheduled/"
+                class="btn btn-light text-dark border fw-bold shadow-sm"
+                style="border-radius:10px; padding: 10px 24px;"><i class="fas fa-calendar-alt me-2"></i>Reschedule</a>
+            </div>
+            {% endif %}
+
+            {% if request.session.ut == 2 and appointment.status == 'confirmed' %}
+            <div class="mt-4 pt-3 border-top">
+              <a href="/appointment/{{ appointment.id }}/status/completed/"
+                class="btn btn-info text-white fw-bold shadow-sm px-4 py-2" style="border-radius:10px"><i
+                  class="fas fa-check-double me-2"></i>Mark Completed</a>
+            </div>
+            {% endif %}
+
+            <!-- Patient Pay -->
+            {% if request.session.ut == 1 and appointment.status == 'confirmed' %}
+            <div class="mt-4 pt-3 border-top">
+              <a href="/payment/create/{{ appointment.id }}/" class="btn btn-success fw-bold shadow-sm px-4 py-2"
+                style="border-radius:10px"><i class="fas fa-credit-card me-2"></i>Pay Consultation Fee</a>
+            </div>
+            {% endif %}
+
+            <!-- Feedback -->
+            {% if request.session.ut == 1 and appointment.status == 'completed' %}
+            <div class="mt-4 pt-3 border-top">
+              <a href="/appointment/{{ appointment.id }}/feedback" class="btn fw-bold px-4 py-2 shadow-sm"
+                style="border-radius:10px; background: #fbbf24; color: #78350f;"><i class="fas fa-star me-2"></i>Leave
+                Feedback</a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="section-card">
+          <div class="card-header">
+            <h5><i class="fas fa-comments text-primary me-2"></i>Consultation Chat</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="chat-wrapper border-0 border-top">
+              <div class="chat-body" id="chatBody">
+                {% for msg in messages_qs %}
+                <div
+                  class="d-flex flex-column {% if msg.sender == request.user %}align-items-end{% else %}align-items-start{% endif %}">
+                  <div style="font-size:.78rem;color:#64748b;margin-bottom:6px;font-weight:600;">
+                    {% if msg.sender == request.user %}You{% else %}{{ msg.sender.name|default:msg.sender.username }}{% endif %}
+                  </div>
+                  <div class="msg-bubble {% if msg.sender == request.user %}msg-mine{% else %}msg-other{% endif %}">
+                    {{ msg.message }}
+                    <span class="msg-time {% if msg.sender == request.user %}text-white-50 text-end{% else %}text-muted{% endif %}">{{ msg.created_at|time:"h:i A" }}</span>
+                  </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5 h-100 d-flex flex-column align-items-center justify-content-center"
+                  style="color:#94a3b8">
+                  <i class="fas fa-comments fa-3x mb-3" style="color:#cbd5e1"></i>
+                  <h6 class="fw-bold text-dark">No messages yet</h6>
+                  <p class="mb-0 small text-muted">Start the conversation with your {% if request.session.ut == 1 %}doctor{% else %}patient{% endif %} here.</p>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="chat-footer">
+                <form method="post" action="/appointment/{{ appointment.id }}/chat" class="d-flex gap-2 m-0">
+                  {% csrf_token %}
+                  <input type="text" name="message" class="form-control chat-input shadow-none"
+                    placeholder="Type your message securely..." required autocomplete="off">
+                  <button type="submit" class="btn shadow-sm"
+                    style="background:linear-gradient(135deg,#00bcd4,#0097a7);color:#fff;border-radius:10px;padding:12px 24px"><i
+                      class="fas fa-paper-plane"></i></button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="section-card">
+          <div class="card-header pb-3">
+            <h5><i class="fas fa-folder-open text-primary me-2"></i>Shared Documents</h5>
+          </div>
+          <div class="card-body pt-2">
+            {% for doc in documents %}
+            <div class="doc-item">
+              <div class="doc-icon"><i class="fas fa-file-medical"></i></div>
+              <div class="flex-grow-1">
+                <div style="color:#1e293b;font-weight:700;font-size:.95rem; margin-bottom: 2px;">{{ doc.description|default:"Medical Document" }}
+                </div>
+                <small class="text-muted fw-semibold">By {{ doc.uploaded_by.name|default:doc.uploaded_by.username }}
+                  &bull; {{ doc.uploaded_at|date:"d M Y" }}</small>
+              </div>
+              <a href="{{ doc.file.url }}" target="_blank" class="btn btn-light border text-primary px-3 shadow-sm"
+                style="border-radius:10px"><i class="fas fa-download mx-1"></i></a>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 bg-light rounded shadow-sm border mb-4">
+              <i class="fas fa-folder-minus text-muted fa-2x mb-2"></i>
+              <p class="text-muted fw-bold mb-0">No documents shared yet.</p>
+            </div>
+            {% endfor %}
+
+            <div class="mt-4 pt-3 border-top">
+              <h6 class="fw-bold text-dark mb-3 small text-uppercase">Upload New Document</h6>
+              <form method="post" action="/appointment/{{ appointment.id }}/document" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row g-3">
+                  <div class="col-md-5">
+                    <input type="file" name="file" class="form-control form-control-light" required>
+                  </div>
+                  <div class="col-md-5">
+                    <input type="text" name="description" class="form-control form-control-light"
+                      placeholder="File Description (e.g. Lab Results)">
+                  </div>
+                  <div class="col-md-2">
+                    <button type="submit" class="btn w-100 h-100 shadow-sm"
+                      style="background:linear-gradient(135deg,#00bcd4,#0097a7);color:#fff;border-radius:10px;font-weight:600;">Upload</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-lg-4">
+
+        <!-- Treatment Plan (Doctor) -->
+        {% if request.session.ut == 2 %}
+        <div class="section-card">
+          <div class="card-header pb-3">
+            <h5><i class="fas fa-notes-medical text-primary me-2"></i>Treatment Plan</h5>
+          </div>
+          <div class="card-body pt-2">
+            <form method="post" action="/appointment/{{ appointment.id }}/treatment">
+              {% csrf_token %}
+              {% if treatment_plan %}
+              <div class="mb-4 p-3 bg-light" style="border-radius:12px;border-left:4px solid #10b981">
+                <div style="color:#1e293b;font-size:.9rem; line-height: 1.6; font-weight: 500;">{{ treatment_plan.plan_text }}</div>
+              </div>
+              {% endif %}
+              <label class="info-label mb-2 d-block">{% if treatment_plan %}Update{% else %}Create{% endif %}
+                Plan</label>
+              <textarea name="plan_text" rows="5" class="form-control form-control-light mb-3"
+                placeholder="Write medical notes and treatment plan here...">{{ treatment_plan.plan_text|default:'' }}</textarea>
+              <button type="submit" class="btn w-100 shadow-sm py-2"
+                style="background:linear-gradient(135deg,#00bcd4,#0097a7);color:#fff;border-radius:10px;font-weight:600;">
+                <i class="fas fa-save me-2"></i>Save Treatment Plan
+              </button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        {% if treatment_plan %}
+        <div class="section-card">
+          <div class="card-header">
+            <h5><i class="fas fa-notes-medical text-primary me-2"></i>Treatment Plan</h5>
+          </div>
+          <div class="card-body">
+            <div class="p-3 bg-light rounded" style="border-left:4px solid #10b981;">
+              <div style="color:#1e293b;line-height:1.7;font-weight:500;">{{ treatment_plan.plan_text }}</div>
+            </div>
+            <div class="text-end mt-2">
+              <small class="text-muted fw-bold"><i class="fas fa-clock me-1"></i>Updated {{ treatment_plan.updated_at|date:"d M Y" }}</small>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <!-- Patient Medical History (Doctor View) -->
+        {% if request.session.ut == 2 %}
+        <div class="section-card">
+          <div class="card-header">
+            <h5><i class="fas fa-file-medical-alt text-primary me-2"></i>Medical History</h5>
+          </div>
+          <div class="card-body">
+            {% if appointment.patient.medical_history %}
+            {% with h=appointment.patient.medical_history %}
+            <div class="mb-3 px-3 border-start border-primary border-3">
+              <span class="info-label text-uppercase" style="font-size: 0.75rem;">Health Summary</span>
+              <p class="mb-0 mt-1 fw-bold text-dark">{{ h.summary|default:"—" }}</p>
+            </div>
+            <div class="mb-3 px-3 border-start border-danger border-3">
+              <span class="info-label text-uppercase" style="font-size: 0.75rem;">Allergies</span>
+              <p class="mb-0 mt-1 fw-bold text-dark">{{ h.allergies|default:"None Reported" }}</p>
+            </div>
+            <div class="mb-3 px-3 border-start border-info border-3">
+              <span class="info-label text-uppercase" style="font-size: 0.75rem;">Current Medications</span>
+              <p class="mb-0 mt-1 fw-bold text-dark">{{ h.medications|default:"None Reported" }}</p>
+            </div>
+            {% endwith %}
+            {% else %}
+            <div class="text-center py-3 bg-light border rounded shadow-sm text-muted">
+              <i class="fas fa-history me-1"></i> No history on record.
+            </div>
+            {% endif %}
+            <a href="/medical_history/view/{{ appointment.patient.id }}/"
+              class="btn btn-light border w-100 text-primary mt-3 shadow-sm fw-bold" style="border-radius:10px">View
+              Full History</a>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Scan Prediction Report -->
+        {% if appointment.prediction_result %}
+        <div class="section-card">
+          <div class="card-header pb-2">
+            <h5><i class="fas fa-brain text-primary me-2"></i>MRI Scan Report</h5>
+          </div>
+          <div class="card-body pt-3">
+            {% with p=appointment.prediction_result %}
+            <div class="position-relative mb-3">
+              <img src="{{ p.uploaded_image.url }}" alt="scan"
+                style="width:100%;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
+              <div class="position-absolute bottom-0 start-0 w-100 p-2 mb-3 text-white text-center"
+                style=" background: rgba(0,0,0,0.6);margin-bottom:20px; border-bottom-left-radius:12px;border-bottom-right-radius:12px;backdrop-filter: blur(2px); font-size: 0.85rem; font-weight: 600;"> Uploaded on {{ p.uploaded_at|date:"d M Y" }}
+              </div>
+            </div>
+            <br>
+            <div class="bg-light p-3 rounded border mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-bold text-muted small text-uppercase">AI Prediction</span>
+                <span class="badge bg-primary px-3 py-2 fs-6 rounded-pill shadow-sm">{{ p.predicted_class|title }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-muted small text-uppercase">Confidence Match</span>
+                <strong class="text-success fs-5">{{ p.confidence|floatformat:1 }}%</strong>
+              </div>
+            </div>
+
+            <a href="/prediction_result/{{ p.id }}/" class="btn btn-outline-info w-100 fw-bold shadow-sm"
+              style="border-radius:10px; padding: 10px;">View Full Analysis</a>
+            {% endwith %}
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Payment Info -->
+        {% if appointment.payment %}
+        <div class="section-card">
+          <div class="card-header pb-2">
+            <h5><i class="fas fa-file-invoice-dollar text-primary me-2"></i>Invoice Details</h5>
+          </div>
+          <div class="card-body pt-2">
+            {% with pay=appointment.payment %}
+            <div class="bg-light p-3 rounded border shadow-sm mb-0">
+              <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                <span class="text-muted fw-semibold">Consultation Fee</span>
+                <span class="fw-bold fs-4 text-dark">₹{{ pay.amount }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-1">
+                <span class="text-muted fw-semibold">Status</span>
+                <span class="badge px-3 py-1 shadow-sm fs-6"
+                  style="border-radius:20px;
+                  {% if pay.status == 'paid' %}background:#10b981;color:#fff{% elif pay.status == 'failed' %}background:#ef4444;color:#fff{% else %}background:#f59e0b;color:#fff{% endif %}">{{ pay.get_status_display }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center py-1 mt-2">
+                <span class="text-muted fw-semibold" style="font-size: 0.85rem;">Date Billed</span>
+                <span class="text-dark fw-bold" style="font-size: 0.85rem;">{{ pay.created_at|date:"d M Y" }}</span>
+              </div>
+              {% if pay.razorpay_payment_id %}
+              <div class="d-flex justify-content-between align-items-center py-1">
+                <span class="text-muted fw-semibold" style="font-size: 0.85rem;">Transaction ID</span>
+                <span class="text-primary fw-bold" style="font-size: 0.8rem; letter-spacing: 0.5px;">{{ pay.razorpay_payment_id }}</span>
+              </div>
+              {% endif %}
+            </div>
+            {% endwith %}
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Auto-scroll chat
+  const chatBody = document.getElementById('chatBody');
+  if (chatBody) {
+    chatBody.style.scrollBehavior = 'smooth';
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+</script>
+{% include 'footer.html' %}

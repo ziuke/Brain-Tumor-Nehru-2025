@@ -1,0 +1,166 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+{% endblock %}
+
+<div class="admin-wrapper">
+    <div class="container">
+        <div class="dashboard-header d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-cog me-2"></i> Admin Control Panel</h2>
+                <p>System Overview & Management</p>
+            </div>
+            <a href="/logout" class="action-btn-bth danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-3 col-md-6">
+                <a href="/admins/users" class="stat-card-bth">
+                    <div class="stat-icon-wrapper" style="background:#e0f2fe; color:#0ea5e9;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-val">{{ total_users }}</div>
+                    <div class="stat-lab">Registered Users</div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="/admins/doctors" class="stat-card-bth">
+                    <div class="stat-icon-wrapper" style="background:#f0fdf4; color:#22c55e;">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-val">{{ total_doctors }}</div>
+                    <div class="stat-lab">Active Doctors</div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="/doctor_approval_list" class="stat-card-bth">
+                    <div class="stat-icon-wrapper" style="background:#fef2f2; color:#ef4444;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-val">{{ pending_doctors }}</div>
+                    <div class="stat-lab">Pending Approvals</div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <a href="/admins/reports" class="stat-card-bth">
+                    <div class="stat-icon-wrapper" style="background:#fdf4ff; color:#a855f7;">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="stat-val">{{ total_predictions }}</div>
+                    <div class="stat-lab">Total Predictions</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Admin Menu -->
+        <div class="admin-card mb-4">
+            <div class="admin-card-header">
+                <h5><i class="fas fa-th-large me-2"></i> Management Menu</h5>
+            </div>
+            <div class="admin-card-body">
+                <div class="quick-menu">
+                    <a href="/admins/users" class="menu-item-bth">
+                        <i class="fas fa-users" style="color:#0ea5e9"></i>
+                        <span>Users</span>
+                    </a>
+                    <a href="/admins/doctors" class="menu-item-bth">
+                        <i class="fas fa-user-md" style="color:#22c55e"></i>
+                        <span>Doctors</span>
+                    </a>
+                    <a href="/admins/doctors/create" class="menu-item-bth">
+                        <i class="fas fa-user-plus" style="color:#f59e0b"></i>
+                        <span>Add Doctor</span>
+                    </a>
+                    <a href="/doctor_approval_list" class="menu-item-bth">
+                        <i class="fas fa-clipboard-check" style="color:#ef4444"></i>
+                        <span>Approvals</span>
+                    </a>
+                    <a href="/admins/feedbacks" class="menu-item-bth">
+                        <i class="fas fa-star" style="color:#8b5cf6"></i>
+                        <span>Feedbacks</span>
+                    </a>
+                    <a href="/admins/reports" class="menu-item-bth">
+                        <i class="fas fa-file-alt" style="color:#64748b"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="/profile" class="menu-item-bth">
+                        <i class="fas fa-user-circle" style="color:#4b94be"></i>
+                        <span>Profile</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Recent Activity -->
+            <div class="col-lg-8">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h5><i class="fas fa-calendar-alt me-2"></i> Recent Appointments</h5>
+                        <a href="/admins/reports" class="btn-ghost-bth btn-sm">View All</a>
+                    </div>
+                    <div class="admin-card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Date</th>
+                                        <th class="text-end pe-4">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for a in recent_appointments %}
+                                    <tr>
+                                        <td class="ps-4 fw-bold">{{ a.patient.name|default:a.patient.username }}</td>
+                                        <td>Dr. {{ a.doctor.name|default:a.doctor.username }}</td>
+                                        <td class="text-muted small">{{ a.appointment_datetime|date:"d M Y" }}</td>
+                                        <td class="text-end pe-4">
+                                            <span class="badge-status badge-{{ a.status }}">
+                                                {{ a.get_status_display }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5 text-muted">No recent appointments.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Doctors List -->
+            <div class="col-lg-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h5><i class="fas fa-user-clock me-2"></i> Pending Approvals</h5>
+                    </div>
+                    <div class="admin-card-body">
+                        {% for d in pending_doctor_list %}
+                        <div class="recent-item">
+                            <div class="fw-bold text-main-bth">Dr. {{ d.name|default:d.username }}</div>
+                            <div class="text-muted small">{{ d.specialization }} &bull; {{ d.qualification }}</div>
+                            <div class="mt-2">
+                                <a href="/doctor_approval_list" class="btn-ghost-bth btn-sm">Review Application</a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4 text-success">
+                            <i class="fas fa-check-circle fa-2x mb-2"></i>
+                            <p class="mb-0">All set! No pending approvals.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.html' %}

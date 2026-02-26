@@ -3,85 +3,120 @@
 {% block content %}
 {% include 'header.html' %}
 
-<link rel="stylesheet" href="{% static 'css/predict.css' %}">
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+<style>
+    .info-card {
+        background-color: #f8fafc;
+        border-left: 4px solid #0ea5e9;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+    }
 
-<div class="banner-w3l-main">
-    <br>
-    <br><br><br>
-    <div class="container mt-5 mb-5 rounded mt-5">
-        <div class="row justify-content-center align-items-start rounded">
-            <div class="col-lg-7 col-md-8 col-sm-12 rounded">
-                <div class="card p-4 shadow-sm rounded">
-                    <div class="card-body rounded">
-                        <h2 class="text-center mb-3"><b>MRI Scan Upload</b></h2>
+    .hint-list {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+
+    .hint-list li {
+        margin-bottom: 0.25rem;
+        color: #475569;
+    }
+
+    .file-meta {
+        color: #64748b;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+<div class="admin-wrapper">
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center align-items-start">
+            <div class="col-lg-7 col-md-8 col-sm-12">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h4 class="mb-0 text-center"><i class="fas fa-brain me-2 text-primary"></i><b>MRI Scan
+                                Upload</b></h4>
+                    </div>
+                    <div class="admin-card-body">
 
                         <!-- Messages -->
                         {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert-message {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
+                        {% for message in messages %}
+                        <div
+                            class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
                         {% endif %}
 
                         <!-- Explanation / Info -->
                         <div class="info-card">
-                            <h5>About Brain Tumor Detection</h5>
-                            <p>
-                                Upload your brain MRI scan image here for automated tumor detection and classification. 
-                                The system uses advanced deep learning models to analyze your scan and provide predictions.
+                            <h5 class="fw-bold text-dark">About Brain Tumor Detection</h5>
+                            <p class="text-muted small">
+                                Upload your brain MRI scan image here for automated tumor detection and classification.
+                                The system uses advanced deep learning models to analyze your scan and provide
+                                predictions.
                             </p>
 
-                            <strong>Accepted Formats</strong>
-                            <ul class="hint-list">
+                            <strong class="text-dark small">Accepted Formats</strong>
+                            <ul class="hint-list small">
                                 <li>Image formats: <b>JPG, JPEG, PNG</b></li>
                                 <li>Maximum file size: <b>10 MB</b></li>
                                 <li>Make sure the image is a clear brain MRI scan for best results</li>
                             </ul>
-                            
-                            <strong>What We Detect</strong>
-                            <ul class="hint-list">
-                                <li><b>Glioma:</b> A type of tumor that occurs in the brain</li>
-                                <li><b>Meningioma:</b> Tumors that arise from the meninges</li>
-                                <li><b>Pituitary:</b> Tumors in the pituitary gland</li>
-                                <li><b>No Tumor:</b> Normal brain scan with no tumor detected</li>
+
+                            <strong class="text-dark small">What We Detect</strong>
+                            <ul class="hint-list small">
+                                <li><b>Glioma</b></li>
+                                <li><b>Meningioma</b></li>
+                                <li><b>Pituitary</b></li>
+                                <li><b>No Tumor</b></li>
                             </ul>
                         </div>
 
                         <!-- Upload Form -->
-                        <form class="upload-form mb-4" action="{% url 'check_mri' %}" method="POST" enctype="multipart/form-data">
+                        <form class="upload-form mb-4" action="{% url 'check_mri' %}" method="POST"
+                            enctype="multipart/form-data">
                             {% csrf_token %}
-                            
+
                             {% if form %}
-                                {% for field in form %}
-                                    <div class="form-group mb-3">
-                                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                                        {{ field }}
-                                        {% if field.help_text %}
-                                            <small class="file-meta">{{ field.help_text }}</small>
-                                        {% endif %}
-                                        {% if field.errors %}
-                                            <div class="text-danger">
-                                                {% for error in field.errors %}
-                                                    <small>{{ error }}</small>
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="form-group mb-3">
-                                    <label for="scan_file">Select Brain MRI Scan Image</label>
-                                    <input type="file" class="form-control" id="scan_file" name="image" accept="image/jpeg,image/jpg,image/png" required>
-                                    <small class="file-meta">Allowed: JPG, JPEG, PNG (Max 10MB)</small>
+                            {% for field in form %}
+                            <div class="mb-4">
+                                <label for="{{ field.auto_id }}"
+                                    class="form-label fw-bold small text-uppercase text-dark">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="file-meta mt-1">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                <div class="text-danger small mt-1 fw-bold">
+                                    {% for error in field.errors %}
+                                    {{ error }}
+                                    {% endfor %}
                                 </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="mb-4">
+                                <label for="scan_file" class="form-label fw-bold small text-uppercase text-dark">Select
+                                    Brain MRI Scan Image</label>
+                                <input type="file" class="form-control form-control-lg bg-light" id="scan_file"
+                                    name="image" accept="image/jpeg,image/jpg,image/png" required>
+                                <div class="file-meta mt-1">Allowed: JPG, JPEG, PNG (Max 10MB)</div>
+                            </div>
                             {% endif %}
 
-                            <button type="submit" class="btn btn-primary w-100">Upload & Analyze</button>
+                            <button type="submit" class="action-btn-bth w-100 py-3"><i
+                                    class="fas fa-upload me-2"></i>Upload & Analyze</button>
                         </form>
 
-
-                        <p class="text-muted small mt-3">By uploading you confirm you have the right to share the data and that sensitive personal data has been handled appropriately.</p>
+                        <p class="text-muted small mt-3 text-center">By uploading you confirm you have the right to
+                            share the data and that sensitive personal data has been handled appropriately.</p>
 
                     </div>
                 </div>

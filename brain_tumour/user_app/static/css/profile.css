@@ -1,0 +1,156 @@
+/* ============================================================
+   Brain Tumour Hub  —  Profile Page Styles (Light Theme)
+   ============================================================ */
+
+.page-wrapper {
+    padding: 60px 0 100px;
+    background: var(--bg-main);
+}
+
+.profile-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #f8fafc, #eff6ff);
+    padding: 60px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.profile-avatar-placeholder {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0 auto 20px;
+    border: 5px solid white;
+    box-shadow: var(--shadow);
+}
+
+.profile-header h3 {
+    margin: 0;
+    color: var(--text-main);
+}
+
+.profile-role {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 8px;
+}
+
+.profile-username {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.profile-body {
+    padding: 40px;
+}
+
+.info-section-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--bg-main);
+    padding-bottom: 8px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.info-item {
+    padding: 0;
+}
+
+.info-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.info-value {
+    color: var(--text-main);
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+}
+
+.action-btn-bth {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--text-main);
+}
+
+.action-btn-bth:hover {
+    background: var(--bg-main);
+    color: var(--primary);
+    border-color: var(--primary-light);
+}
+
+.action-btn-bth.primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.action-btn-bth.primary:hover {
+    background: var(--primary-hover);
+    color: white;
+}
+
+.action-btn-bth.danger {
+    color: var(--danger);
+    border-color: #fee2e2;
+}
+
+.action-btn-bth.danger:hover {
+    background: #fef2f2;
+    border-color: var(--danger);
+}

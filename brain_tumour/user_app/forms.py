@@ -106,6 +106,9 @@ class DoctorRegisterForm(forms.ModelForm):
     )
     SPECIALIZATION_CHOICES = [
         ('', 'Specialization*'),
+        ('Neuro-Oncology', 'Neuro-Oncology'),
+        ('Neurology', 'Neurology'),
+        ('Neurosurgery', 'Neurosurgery'),
         ('Cardiology', 'Cardiology'),
         ('Heart Surgery', 'Heart Surgery'),
         ('Skin Care', 'Skin Care'),
@@ -161,29 +164,23 @@ class DoctorRegisterForm(forms.ModelForm):
         choices=COUNTRY_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control', 'id': 'country', 'required': 'required'})
     )
-    phone = forms.CharField(max_length=10,
-        widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Phone'})
-    )
-    
 
     class Meta:
         model = Register
-        fields = ['username', 'email', 'place', 'phone','country' ,'qualification', 'specialization', 'experience',  'image', 'password', 'confirm_password']
+        fields = ['username', 'name', 'email', 'place', 'phone', 'country', 'location', 'qualification', 'specialization', 'experience', 'image', 'password', 'confirm_password']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Full Name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'place': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Place/City'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clinic/Hospital Name'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
             'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
-            'qualification': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Qualification'}),
-            'experience': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Experience'}),
-            'disease': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
-                                                    
+            'confirm_password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}),
+            'qualification': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., MBBS, MD'}),
+            'experience': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 5 Years'}),
         }
         help_texts = {'username': None}
-    # def clean_username(self):
-    #     username = self.cleaned_data.get("username")
-    #     if Register.objects.filter(username=username).exists():
-    #         raise forms.ValidationError("This username is already taken. Please choose a different one.")
-    #     return username
 
     #Validate the email for format and uniqueness
   
@@ -395,4 +392,101 @@ class ImageUploadForm(forms.Form):
             if f'.{ext}' not in valid_extensions:
                 raise forms.ValidationError("Invalid file format. Please upload a JPG or PNG image.")
         return image
+
+
+class DoctorProfileForm(forms.ModelForm):
+    class Meta:
+        model = DoctorProfile
+        fields = ['bio', 'consultation_fee', 'consultation_mode', 'clinic_address', 'is_available']
+        widgets = {
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'consultation_fee': forms.NumberInput(attrs={'class': 'form-control'}),
+            'consultation_mode': forms.TextInput(attrs={'class': 'form-control'}),
+            'clinic_address': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class DoctorAvailabilityForm(forms.ModelForm):
+    class Meta:
+        model = DoctorAvailability
+        fields = ['date', 'start_time', 'end_time', 'slot_minutes', 'fee', 'mode', 'notes']
+        widgets = {
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'slot_minutes': forms.NumberInput(attrs={'class': 'form-control'}),
+            'fee': forms.NumberInput(attrs={'class': 'form-control'}),
+            'mode': forms.TextInput(attrs={'class': 'form-control'}),
+            'notes': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class AppointmentRequestForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['appointment_datetime', 'reason']
+        widgets = {
+            'appointment_datetime': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }
+
+
+class DoctorQueryForm(forms.ModelForm):
+    class Meta:
+        model = DoctorQuery
+        fields = ['doctor', 'question']
+        widgets = {
+            'doctor': forms.Select(attrs={'class': 'form-control'}),
+            'question': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }
+
+
+class DoctorAnswerForm(forms.ModelForm):
+    class Meta:
+        model = DoctorQuery
+        fields = ['answer']
+        widgets = {
+            'answer': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }
+
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['section', 'rating', 'comment']
+        widgets = {
+            'section': forms.Select(attrs={'class': 'form-control'}),
+            'rating': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 5}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+
+class DocumentUploadForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ['file', 'description']
+        widgets = {
+            'file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class TreatmentPlanForm(forms.ModelForm):
+    class Meta:
+        model = TreatmentPlan
+        fields = ['plan_text']
+        widgets = {
+            'plan_text': forms.Textarea(attrs={'class': 'form-control', 'rows': 6}),
+        }
+
+
+class PatientMedicalHistoryForm(forms.ModelForm):
+    class Meta:
+        model = PatientMedicalHistory
+        fields = ['summary', 'allergies', 'medications']
+        widgets = {
+            'summary': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'allergies': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'medications': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
         

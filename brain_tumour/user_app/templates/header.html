@@ -1,210 +1,269 @@
 {% load static %}
-<!--
-Author: W3layouts
-Author URL: http://w3layouts.com 
--->
 <!doctype html>
-<html lang="zxx">
+<html lang="en">
 
 <head>
-  <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="keywords"
-    content="Brain Tumour, AI diagnosis, neuro-oncology, brain tumour support, brain cancer information" />
+  <meta name="description"
+    content="Brain Tumour Hub — AI-powered brain tumour diagnosis and specialist consultation platform.">
+  <meta name="keywords" content="Brain Tumour, AI diagnosis, neuro-oncology, brain cancer, MRI scan">
   <title>Brain Tumour Hub</title>
-  <link href="//fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap"
 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-  <!-- Template CSS -->
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Bootstrap 4 CSS -->
   <link rel="stylesheet" href="{% static 'css/style-starter.css' %}">
+  <!-- Global Theme -->
+  <link rel="stylesheet" href="{% static 'css/global.css' %}">
+
+  <!-- Page-specific CSS injected by child templates -->
+  {% block extra_css %}{% endblock %}
+
+  <style>
+    /* Premium Nav Styling */
+    .header-w3l {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      background: white !important;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-nav .nav-link {
+      font-weight: 600;
+      color: #475569 !important;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .navbar-nav .nav-link:hover {
+      color: #00bcd4 !important;
+    }
+
+    .navbar-nav .nav-item.active .nav-link {
+      color: #00bcd4 !important;
+    }
+
+    .user-pill {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 6px 16px !important;
+      color: #1e293b !important;
+      font-weight: 700;
+    }
+
+    .user-pill:hover {
+      background: #e2e8f0;
+      color: #0f172a !important;
+    }
+
+    .login-btn {
+      background: linear-gradient(135deg, #00bcd4, #0097a7);
+      color: white !important;
+      border-radius: 30px;
+      padding: 8px 24px !important;
+      box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
+    }
+  </style>
 </head>
 
 <body>
-  <div class="header-w3l">
-  <!--header-->
-  <header id="site-header" class="header-w3l fixed-top">
-    <div class="container">
-      <nav class="navbar navbar-expand-lg stroke">
-        <a class="navbar-brand" href="index.html">
-          B<span class="sub-logo">r</span>ain Tumou<span class="sub-logo">r</span> Hub
+
+  <!-- ─── NAVBAR ─────────────────────────────────────────────── -->
+  <header id="site-header" class="header-w3l fixed-top" style="z-index:1050">
+    <div class="container-fluid px-4">
+      <nav class="navbar navbar-expand-lg stroke py-2">
+
+        <!-- Brand -->
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+          <span
+            style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#00bcd4,#0097a7);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;color:#fff;flex-shrink:0;box-shadow:0 4px 10px rgba(0,188,212,0.3)">BH</span>
+          <span style="font-size: 1.4rem; font-weight: 700; color: #1e293b; letter-spacing: -0.5px;">Brain<span
+              style="color:#00bcd4">Tumour</span>Hub</span>
         </a>
-        <!-- if logo is image enable this   
-            <a class="navbar-brand" href="#index.html">
-                <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
-            </a> -->
-        <button class="navbar-toggler  collapsed bg-gradient" type="button" data-toggle="collapse"
-          data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
-          aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
-          <span class="navbar-toggler-icon fa icon-close fa-times"></span>
-          </span>
+
+        <!-- Mobile toggler -->
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#mainNav"
+          aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation"
+          style="border: none; background: #f1f5f9; padding: 8px 12px; border-radius: 8px;">
+          <span class="fa fa-bars" style="color:#00bcd4; font-size: 1.2rem;"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-          
-          
-          <ul class="navbar-nav mx-lg-auto">
+        <!-- Links -->
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav ml-auto align-items-lg-center" style="gap: 10px;">
+
+            <!-- Always visible -->
+            <li class="nav-item">
+              <a class="nav-link" href="/"><i class="fas fa-home me-1 opacity-75"></i> Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/about"><i class="fas fa-info-circle me-1 opacity-75"></i> About</a>
+            </li>
+
+            <!-- Specific Dashboards -->
             {% if request.session.ut == 0 %}
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home</a>
-            </li>
             <li class="nav-item">
-              <a class="nav-link" href="/about/">About</a>
+              <a class="nav-link" href="/admins/dashboard" style="color: #00bcd4 !important;"><i
+                  class="fas fa-chart-pie me-1"></i> Admin Panel</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/vw_users/1/">View Users</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Doctors 
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/doctor_approval_list">Request  </a>
-                  <a class="dropdown-item" href="/vw_users/2/">View Approved </a>
-                 
-              </div>
-          </li>
-            
-            
-           
-            <!--
-          <li class="nav-item">
-              <a class="nav-link" href="/">Contact</a>
-            </li>
-          -->
-            
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
-            </li>
-          
-
             {% elif request.session.ut == 1 %}
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home</a>
-            </li>
             <li class="nav-item">
-              <a class="nav-link" href="/about/">About</a>
+              <a class="nav-link" href="/user/dashboard" style="color: #00bcd4 !important;"><i
+                  class="fas fa-columns me-1"></i> Dashboard</a>
             </li>
-            <!-- <li class="nav-item">
-              <a class="nav-link" href="/">View Doc</a>
-            </li> -->
-         
-            <li class="nav-item">
-              <a class="nav-link" href="/check_mri/">Check MRI </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/prediction_history/"> Prediction History</a>
-            </li>
-           
-            
-            
-            
-         
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
-            </li>
-            
             {% elif request.session.ut == 2 %}
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home</a>
-            </li>
             <li class="nav-item">
-              <a class="nav-link" href="/about">About</a>
+              <a class="nav-link" href="/doctor/dashboard" style="color: #00bcd4 !important;"><i
+                  class="fas fa-user-md me-1"></i> Doctor Panel</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/">Update Location</a>
-            </li>
-         
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
-            </li>
-            
-            {% else %}
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/about">About</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Register Here 
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/user_register">User  </a>
-                  <a class="dropdown-item" href="/doctor_register">Doctor </a>
-                  <!-- Add more options here -->
-              </div>
-          </li>
-            <!--
-          <li class="nav-item">
-              <a class="nav-link" href="/">Contact</a>
-            </li>
-          -->
-            <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
-            </li>
-            
             {% endif %}
-            {% if request.user.username %}
-            <li class="nav-item mt-3 text-info">
-              Hi
-              <i class="fa fa-hand-peace-o text-light text-info"></i>
 
-             
-            <b class="text-info"> {{ request.user.username}}</b>
-             {% else %}
-             {% endif %}
+            <!-- Auth/Profile -->
+            {% if not request.user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-user-plus me-1 opacity-75"></i> Register
+              </a>
+              <div class="dropdown-menu shadow-lg border-0 rounded-lg mt-2" aria-labelledby="registerDropdown">
+                <a class="dropdown-item py-2 fw-semibold" href="/user_register"><i class="fas fa-user fa-fw me-2"
+                    style="color:#00bcd4"></i> As Patient</a>
+                <a class="dropdown-item py-2 fw-semibold" href="/doctor_register"><i class="fas fa-user-md fa-fw me-2"
+                    style="color:#00bcd4"></i> As Doctor</a>
+              </div>
             </li>
-          </ul>
+            <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+              <a class="nav-link login-btn text-center" href="/login">
+                <i class="fas fa-sign-in-alt me-1"></i> Login
+              </a>
+            </li>
+            {% else %}
+            <li class="nav-item dropdown ms-lg-2 mt-2 mt-lg-0">
+              <a class="nav-link dropdown-toggle user-pill d-flex align-items-center justify-content-center gap-2"
+                href="#" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-user-circle" style="color:#00bcd4; font-size: 1.2rem;"></i>
+                <span>{{ request.user.username }}</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow-lg border-0 rounded-lg mt-2"
+                aria-labelledby="userDropdown">
+                <div class="px-4 py-3 bg-light border-bottom mb-2 rounded-top">
+                  <p class="text-sm text-muted mb-0">Signed in as</p>
+                  <p class="fw-bold text-dark mb-0">{{ request.user.email }}</p>
+                </div>
 
-        </div>
-        <!-- toggle switch for light and dark theme -->
-        
-        <!-- //toggle switch for light and dark theme -->
+                {% if request.session.ut == 1 %}
+                <a class="dropdown-item py-2 fw-semibold text-secondary" href="{% url 'profile' %}"><i
+                    class="fas fa-id-badge fa-fw me-2"></i> My Profile</a>
+                <a class="dropdown-item py-2 fw-semibold text-secondary" href="{% url 'prediction_history' %}"><i
+                    class="fas fa-history fa-fw me-2"></i> Scan History</a>
+                {% elif request.session.ut == 2 %}
+                <a class="dropdown-item py-2 fw-semibold text-secondary" href="{% url 'profile' %}"><i
+                    class="fas fa-id-badge fa-fw me-2"></i> Doctor Profile</a>
+                {% endif %}
+
+                <div class="dropdown-divider my-2"></div>
+                <a class="dropdown-item py-2 fw-bold text-danger" href="/logout"><i
+                    class="fas fa-sign-out-alt fa-fw me-2"></i> Logout</a>
+              </div>
+            </li>
+            {% endif %}
+
+          </ul>
+        </div><!-- /collapse -->
       </nav>
     </div>
   </header>
-</div>
 
-{% if messages %}
+  <!-- Navbar padding spacer to prevent content overlap -->
+  <div style="height: 10px;"></div>
+
+  <!-- ─── FLASH MESSAGES ──────────────────────────────────────── -->
+  {% if messages %}
+  <div id="flash-container" class="flash-toast">
     {% for message in messages %}
-      {% if 'log' in message.tags %}
-        
-          <script>
-    
-                <div class="alert alert-success alert-dismissable fade show" role="alert">
-                      {{message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-          </script>
-      {% elif 'log_dr' in message.tags %}
-        
-          <script>
-    
-                <div class="alert alert-success alert-dismissable fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-          </script>
-      {% elif 'user_reg' in message.tags %}
-        
-          <script>
-    
-                <div class="alert alert-success alert-dismissable fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-          </script>
-      {% endif %}
+    <div
+      class="toast-inner {% if 'error' in message.tags %}danger{% elif 'success' in message.tags %}success{% elif 'warning' in message.tags %}warning{% endif %}">
+      <i class="fas {% if 'error' in message.tags %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"
+        style="color:inherit"></i>
+      <div style="flex:1">
+        <div style="font-size:.9rem; font-weight:600">{{ message }}</div>
+      </div>
+      <button onclick="this.closest('.toast-inner').parentElement.remove()"
+        style="background:none;border:none;color:inherit;opacity:0.6;cursor:pointer;font-size:1.2rem;line-height:1;padding:0;outline:none;">&times;</button>
+    </div>
     {% endfor %}
+  </div>
+
+  <style>
+    .flash-toast {
+      position: fixed;
+      top: 100px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast-inner {
+      background: white;
+      border-left: 5px solid #00bcd4;
+      border-radius: 8px;
+      padding: 16px 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 320px;
+      max-width: 450px;
+      animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: opacity 0.3s;
+    }
+
+    .toast-inner.success {
+      border-left-color: #10b981;
+      color: #065f46;
+    }
+
+    .toast-inner.danger {
+      border-left-color: #ef4444;
+      color: #991b1b;
+    }
+
+    .toast-inner.warning {
+      border-left-color: #f59e0b;
+      color: #92400e;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+  <script>
+    setTimeout(function () {
+      var c = document.getElementById('flash-container');
+      if (c) c.style.transition = 'opacity .5s';
+      if (c) c.style.opacity = '0';
+      setTimeout(function () { if (c) c.remove() }, 500);
+    }, 5000);
+  </script>
   {% endif %}

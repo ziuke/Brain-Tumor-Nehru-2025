@@ -1,0 +1,129 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_list.css' %}">
+{% endblock %}
+
+<div class="page-wrapper">
+    <div class="container">
+        <div class="list-header d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-users me-2"></i> Manage Registered Users</h2>
+                <p>Monitor, activate, or manage user accounts on the platform.</p>
+            </div>
+            <a href="{% url 'admin_dashboard' %}" class="btn-ghost-bth">
+                <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+            </a>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash-toast success mb-4">
+            <div class="toast-inner">
+                <i class="fas fa-info-circle"></i>
+                {{ message }}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="list-card">
+            <div class="list-card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">All Users ({{ users.count }})</h5>
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Search by name, email..."
+                        class="form-control search-input">
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bth mb-0" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 60px;">#</th>
+                                <th>User Identification</th>
+                                <th>Contact Information</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th class="text-end">Administrative Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users %}
+                            <tr>
+                                <td class="text-center text-muted">{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        {% if u.image %}
+                                        <img src="{{ u.image.url }}" alt="" class="user-avatar-list">
+                                        {% else %}
+                                        <div class="user-placeholder-list">{{ u.username|first|upper }}</div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="fw-bold">{{ u.name|default:u.username }}</div>
+                                            <div class="small text-muted">@{{ u.username }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="small"><i class="far fa-envelope me-1 text-muted"></i> {{ u.email }}
+                                    </div>
+                                    <div class="small"><i class="fas fa-phone-alt me-1 text-muted"></i> {{ u.phone }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-muted small"><i class="fas fa-map-marker-alt me-1"></i> {{ u.place|default:"Not set" }}</span>
+                                </td>
+                                <td>
+                                    {% if u.is_active %}
+                                    <span class="badge-status badge-active">Active</span>
+                                    {% else %}
+                                    <span class="badge-status badge-inactive">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <div class="action-btns justify-content-end">
+                                        <a href="/admins/toggle/{{ u.id }}/"
+                                            class="btn-ghost-bth btn-sm {% if u.is_active %}text-danger{% else %}text-success{% endif %}"
+                                            title="{% if u.is_active %}Deactivate{% else %}Activate{% endif %}">
+                                            {% if u.is_active %}<i class="fas fa-ban"></i>{% else %}<i
+                                                class="fas fa-check"></i>{% endif %}
+                                        </a>
+                                        <a href="/admins/edit/{{ u.id }}/" class="btn-ghost-bth btn-sm text-primary"
+                                            title="Edit User">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="/admins/delete/{{ u.id }}/" class="btn-ghost-bth btn-sm text-danger"
+                                            title="Delete User"
+                                            onclick="return confirm('Permanently delete {{ u.username }}?')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fas fa-users-slash fa-3x mb-3 d-block"></i>
+                                    No registered users found.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const val = this.value.toLowerCase();
+        document.querySelectorAll('#usersTable tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
+        });
+    });
+</script>
+{% include 'footer.html' %}

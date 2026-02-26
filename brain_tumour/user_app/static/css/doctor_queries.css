@@ -1,0 +1,27 @@
+/* ============================================================
+   Brain Tumour Hub — Doctor Queries Styles
+   ============================================================ */
+
+.bg-light-stripe {
+    background: rgba(0, 188, 212, 0.02);
+}
+
+.query-row {
+    transition: var(--transition);
+}
+
+.query-row:hover {
+    background: #fafafa;
+}
+
+.bg-success-light {
+    background-color: #ecfdf5;
+}
+
+.bg-warning-light {
+    background-color: #fffbeb;
+}
+
+.italic {
+    font-style: italic;
+}

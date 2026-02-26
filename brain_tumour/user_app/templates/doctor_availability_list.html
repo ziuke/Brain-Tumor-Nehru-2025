@@ -1,0 +1,127 @@
+{% include 'header.html' %}
+<style>
+  .page-wrapper {
+    padding: 100px 0 60px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+  }
+
+  .section-card {
+    background: #ffffff;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 24px 32px;
+  }
+
+  .card-body {
+    padding: 32px;
+  }
+
+  .table thead th {
+    border-bottom: 2px solid #e2e8f0;
+    color: #475569;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    background: #f8f9fa;
+  }
+
+  .table tbody td {
+    vertical-align: middle;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .table tbody tr:hover {
+    background-color: rgba(0, 188, 212, 0.02);
+  }
+
+  /* Make badges match the theme */
+  .badge-mode {
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+</style>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 style="color:#1e293b;font-weight:800;letter-spacing:-0.5px;"><i
+            class="fas fa-calendar-alt text-primary me-2"></i>My Schedule</h2>
+        <p class="text-muted fw-semibold mb-0" style="margin-top:6px;">Manage your consultation slots and availability.
+        </p>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="/doctor/dashboard" class="btn btn-light shadow-sm border text-dark fw-bold rounded p-2 px-3"><i
+            class="fas fa-arrow-left me-2"></i>Dashboard</a>
+        <a href="/doctor/availability/add" class="btn shadow-sm"
+          style="background:linear-gradient(135deg,#00bcd4,#0097a7);color:#fff;font-weight:700;border:none;border-radius:8px;padding:10px 20px;"><i
+            class="fas fa-plus me-2"></i>Add Slot</a>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-borderless mb-0">
+            <thead>
+              <tr>
+                <th style="border-top-left-radius: 20px;"><i class="fas fa-calendar-day me-2"></i>Date</th>
+                <th><i class="fas fa-clock me-2"></i>Time Window</th>
+                <th><i class="fas fa-money-bill-wave me-2"></i>Fee</th>
+                <th><i class="fas fa-video me-2"></i>Mode</th>
+                <th class="text-end" style="border-top-right-radius: 20px;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for a in availabilities %}
+              <tr>
+                <td>{{ a.date|date:"D, d M Y" }}</td>
+                <td>
+                  <span class="text-dark fw-bold">{{ a.start_time|time:"h:i A" }} <i
+                      class="fas fa-long-arrow-alt-right mx-1 text-muted"></i> {{ a.end_time|time:"h:i A" }}</span>
+                </td>
+                <td style="color:#10b981;font-weight:800;">₹ {{ a.fee }}</td>
+                <td><span class="badge-mode"><i
+                      class="fas {% if a.mode == 'Online' %}fa-globe{% else %}fa-hospital{% endif %} me-1"></i>{{ a.mode }}</span></td>
+                <td class="text-end">
+                  <a class="btn btn-sm btn-outline-danger fw-bold rounded-circle p-2 shadow-sm"
+                    href="/doctor/availability/delete/{{ a.id }}/" style="width:35px;height:35px;"
+                    title="Delete Slot"><i class="fas fa-trash"></i></a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5">
+                  <div class="text-center py-5 bg-white rounded border-0 shadow-sm mx-3 my-3">
+                    <i class="fas fa-calendar-times fa-4x mb-3 text-muted" style="opacity: 0.5;"></i>
+                    <h5 class="fw-bold text-dark">Your schedule is empty.</h5>
+                    <p class="text-muted fw-semibold">Click "Add Slot" to start defining your consultation hours.</p>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

@@ -8,8 +8,14 @@ import json
 import numpy as np
 import tensorflow as tf
 from PIL import Image
-from model_architecture import load_model
-from preprocessing import CLASS_TYPES, get_class_indices_from_directory
+
+CLASS_TYPES = ["glioma", "meningioma", "notumor", "pituitary"]
+
+def load_model(model_path):
+    return tf.keras.models.load_model(model_path)
+
+def get_class_indices_from_directory(train_dir):
+    return {class_name: idx for idx, class_name in enumerate(sorted(CLASS_TYPES))}
 
 
 def preprocess_image(image_path, target_size=(150, 150)):

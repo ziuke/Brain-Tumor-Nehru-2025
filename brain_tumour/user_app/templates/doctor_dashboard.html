@@ -1,0 +1,246 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+{% endblock %}
+
+<div class="admin-wrapper">
+  <div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header d-flex justify-content-between align-items-center">
+      <div>
+        <h2><i class="fas fa-user-md mb-2"></i> Dr. {{ request.user.name|default:request.user.username }}</h2>
+        <p>{{ request.user.specialization }} | {{ request.user.qualification }}</p>
+      </div>
+      <div>
+        <a href="{% url 'profile' %}" class="btn-ghost-bth btn-sm me-2"><i class="fas fa-id-card"></i>
+          Profile</a>
+        <a href="/logout" class="action-btn-bth danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card-bth">
+          <div class="stat-icon-wrapper" style="background:#e0f2fe; color:#0369a1;">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="stat-val">{{ total_appointments }}</div>
+          <div class="stat-lab">Total Appointments</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card-bth">
+          <div class="stat-icon-wrapper" style="background:#fef3c7; color:#92400e;">
+            <i class="fas fa-user-clock"></i>
+          </div>
+          <div class="stat-val">{{ pending_appointments }}</div>
+          <div class="stat-lab">New Requests</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card-bth">
+          <div class="stat-icon-wrapper" style="background:#dcfce7; color:#166534;">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <div class="stat-val">{{ unique_patients }}</div>
+          <div class="stat-lab">Patients Served</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-card-bth">
+          <div class="stat-icon-wrapper" style="background:#f3e8ff; color:#6b21a8;">
+            <i class="fas fa-comment-medical"></i>
+          </div>
+          <div class="stat-val">{{ pending_queries }}</div>
+          <div class="stat-lab">Pending Queries</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="admin-card mb-4">
+      <div class="admin-card-header">
+        <h5><i class="fas fa-th-large me-2"></i> Dashboard Quick Tools</h5>
+      </div>
+      <div class="admin-card-body">
+        <div class="quick-menu">
+          <a href="{% url 'doctor_availability_add' %}" class="menu-item-bth">
+            <i class="fas fa-calendar-plus" style="color:#0ea5e9"></i>
+            <span>Add Slots</span>
+          </a>
+          <a href="{% url 'doctor_availability_list' %}" class="menu-item-bth">
+            <i class="fas fa-clock" style="color:#22c55e"></i>
+            <span>My Schedule</span>
+          </a>
+          <a href="{% url 'doctor_queries' %}" class="menu-item-bth">
+            <i class="fas fa-comments" style="color:#f59e0b"></i>
+            <span>Consultations</span>
+          </a>
+          <a href="{% url 'doctor_profile_edit' %}" class="menu-item-bth">
+            <i class="fas fa-user-md" style="color:#ef4444"></i>
+            <span>Prof. Details</span>
+          </a>
+          <a href="{% url 'notifications_list' %}" class="menu-item-bth">
+            <i class="fas fa-bell" style="color:#8b5cf6"></i>
+            <span>Alerts</span>
+          </a>
+          <a href="{% url 'profile' %}" class="menu-item-bth">
+            <i class="fas fa-user-circle" style="color:#6c8cb8"></i>
+            <span>Profile</span>
+          </a>
+          <a href="{% url 'change_password' %}" class="menu-item-bth">
+            <i class="fas fa-user-shield" style="color:#64748b"></i>
+            <span>Security</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <!-- Left Side: Appointments & Availability -->
+      <div class="col-lg-8">
+        <!-- Appointment Requests -->
+        <div class="admin-card mb-4">
+          <div class="admin-card-header">
+            <h5><i class="fas fa-calendar-alt me-2"></i> Recent Appointments</h5>
+          </div>
+          <div class="admin-card-body p-0">
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">Patient</th>
+                    <th>Schedule</th>
+                    <th>Prediction</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for a in appointments %}
+                  <tr>
+                    <td class="ps-4">
+                      <div class="fw-bold text-main-bth">{{ a.patient.name|default:a.patient.username }}</div>
+                      <div class="text-muted small"><i class="fas fa-phone-alt me-1"></i>{{ a.patient.phone }}</div>
+                    </td>
+                    <td>
+                      <div class="text-muted small">{{ a.appointment_datetime|date:"d M Y" }}</div>
+                      <div class="text-muted small">{{ a.appointment_datetime|time:"h:i A" }}</div>
+                    </td>
+                    <td>
+                      <span class="text-primary fw-bold">{{ a.predicted_class|title|default:"No Scan" }}</span>
+                    </td>
+                    <td>
+                      <span class="badge-status badge-{{ a.status }}">{{ a.get_status_display }}</span>
+                    </td>
+                    <td class="text-end pe-4">
+                      <a href="{% url 'appointment_detail' a.id %}" class="btn-ghost-bth btn-sm" title="View Detail"><i
+                          class="fas fa-eye"></i></a>
+                      {% if a.status == 'requested' %}
+                      <a href="{% url 'appointment_update_status' a.id 'confirmed' %}"
+                        class="btn-ghost-bth btn-sm text-success" title="Confirm"><i class="fas fa-check"></i></a>
+                      <a href="{% url 'appointment_update_status' a.id 'rejected' %}"
+                        class="btn-ghost-bth btn-sm text-danger" title="Reject"><i class="fas fa-times"></i></a>
+                      {% endif %}
+                      {% if a.status == 'confirmed' %}
+                      <a href="{% url 'appointment_update_status' a.id 'completed' %}"
+                        class="btn-ghost-bth btn-sm text-primary" title="Complete"><i
+                          class="fas fa-check-double"></i></a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                      No appointment requests scheduled.
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Availability slots -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h5><i class="fas fa-calendar-day me-2"></i> My Availability</h5>
+            <a href="{% url 'doctor_availability_add' %}" class="btn-ghost-bth btn-sm"><i class="fas fa-plus me-1"></i>
+              Add Slot</a>
+          </div>
+          <div class="admin-card-body p-0">
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">Date</th>
+                    <th>Time Range</th>
+                    <th>Min.</th>
+                    <th>Fee</th>
+                    <th>Mode</th>
+                    <th class="text-end pe-4">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for av in availabilities %}
+                  <tr>
+                    <td class="ps-4 fw-bold">{{ av.date|date:"D, d M" }}</td>
+                    <td class="text-muted small">{{ av.start_time|time:"h:i A" }} – {{ av.end_time|time:"h:i A" }}</td>
+                    <td>{{ av.slot_minutes }}</td>
+                    <td class="text-success fw-bold">₹{{ av.fee }}</td>
+                    <td><span class="badge bg-light text-dark">{{ av.mode }}</span></td>
+                    <td class="text-end pe-4">
+                      <a href="{% url 'doctor_availability_delete' av.id %}" class="btn-ghost-bth btn-sm text-danger"
+                        onclick="return confirm('Remove this slot?')">
+                        <i class="fas fa-trash-alt"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">No availability slots added yet.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Queries & Notifications -->
+      <div class="col-lg-4">
+        <!-- Patient Queries -->
+        <div class="admin-card mb-4">
+          <div class="admin-card-header">
+            <h5><i class="fas fa-comment-medical me-2"></i> Patient Inquiries</h5>
+            <a href="{% url 'doctor_queries' %}" class="btn-ghost-bth btn-sm">View All</a>
+          </div>
+          <div class="admin-card-body">
+            {% for q in queries %}
+            <div class="recent-item">
+              <div class="fw-bold text-main-bth">Patient: {{ q.patient.name|default:q.patient.username }}</div>
+              <div class="text-muted small fst-italic">"{{ q.question|truncatechars:50 }}"</div>
+              <div class="mt-2">
+                {% if not q.answer %}
+                <a href="{% url 'answer_query' q.id %}" class="btn-ghost-bth btn-sm text-warning small p-1"><i
+                    class="fas fa-reply"></i> Reply Needed</a>
+                {% else %}
+                <span class="text-success small fw-bold"><i class="fas fa-reply-all me-1"></i> Replied</span>
+                {% endif %}
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 text-muted">No pending inquiries.</div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

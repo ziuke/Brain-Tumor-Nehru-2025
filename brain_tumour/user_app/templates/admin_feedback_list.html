@@ -1,0 +1,97 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_feedback.css' %}">
+{% endblock %}
+
+<div class="page-wrapper">
+    <div class="container">
+        <div class="feedback-header d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-star me-2"></i> User Feedback Repository</h2>
+                <p>Monitor patient experiences and service quality ratings across the platform.</p>
+            </div>
+            <a href="{% url 'admin_dashboard' %}" class="btn-ghost-bth">
+                <i class="fas fa-arrow-left me-2"></i> Dashboard
+            </a>
+        </div>
+
+        <div class="feedback-card">
+            <div class="feedback-card-header">
+                <h5>Recent Testimonials & Ratings ({{ feedbacks.count }})</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-feedback mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 60px;">#</th>
+                                <th>User</th>
+                                <th>Context</th>
+                                <th>Rating</th>
+                                <th>Review Content</th>
+                                <th>Category</th>
+                                <th class="text-end">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in feedbacks %}
+                            <tr>
+                                <td class="text-center text-muted">{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="fw-bold text-main-bth">{{ f.user.name|default:f.user.username }}</div>
+                                    <div class="small text-muted">@{{ f.user.username }}</div>
+                                </td>
+                                <td>
+                                    {% if f.doctor %}
+                                    <div class="small text-muted">Dr. {{ f.doctor.name|default:f.doctor.username }}
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted small">— System Wide —</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="star-rating-bth">
+                                        {% for i in "12345" %}
+                                        {% if forloop.counter <= f.rating %} <i class="fas fa-star"></i>
+                                            {% else %}
+                                            <i class="far fa-star"></i>
+                                            {% endif %}
+                                            {% endfor %}
+                                    </div>
+                                    <div class="extra-small fw-bold text-muted mt-1">{{ f.rating }}.0 Score</div>
+                                </td>
+                                <td>
+                                    <div class="feedback-comment">
+                                        {{ f.comment|default:"No written review provided." }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="section-badge-bth" style="
+                                        {% if f.section == 'doctor' %}background:#e0f2fe; color:#0ea5e9
+                                        {% elif f.section == 'payment' %}background:#f0fdf4; color:#22c55e
+                                        {% elif f.section == 'booking' %}background:#fefce8; color:#a16207
+                                        {% else %}background:#f5f3ff; color:#8b5cf6{% endif %}">
+                                        {{ f.get_section_display }}
+                                    </span>
+                                </td>
+                                <td class="text-end text-muted small">
+                                    {{ f.created_at|date:"d M Y" }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fas fa-comment-slash fa-3x mb-3 d-block opacity-25"></i>
+                                    No feedback entries recorded yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.html' %}

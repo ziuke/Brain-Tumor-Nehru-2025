@@ -1,0 +1,14 @@
+{% include 'header.html' %}
+<div class="banner-w3l-main mt-5">
+  <div class="container">
+    <h2 class="text-white">Create Doctor</h2>
+    <div class="card p-3 mt-3">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Create</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}

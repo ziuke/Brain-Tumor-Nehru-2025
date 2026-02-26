@@ -1,0 +1,143 @@
+{% include 'header.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_list.css' %}">
+{% endblock %}
+
+<div class="page-wrapper">
+    <div class="container">
+        <div class="list-header d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-user-md me-2"></i> Manage Medical Staff</h2>
+                <p>Register new doctors, manage existing profiles and approval statuses.</p>
+            </div>
+            <div class="d-flex gap-3">
+                <a href="/admins/doctors/create" class="btn-primary-bth">
+                    <i class="fas fa-user-plus me-2"></i> Add New Doctor
+                </a>
+                <a href="{% url 'admin_dashboard' %}" class="btn-ghost-bth">
+                    <i class="fas fa-arrow-left me-2"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash-toast success mb-4">
+            <div class="toast-inner">
+                <i class="fas fa-info-circle"></i>
+                {{ message }}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="list-card">
+            <div class="list-card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Medical Team ({{ doctors.count }})</h5>
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Search doctors, specializations..."
+                        class="form-control search-input">
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bth mb-0" id="doctorTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 60px;">#</th>
+                                <th>Doctor Information</th>
+                                <th>Specialization</th>
+                                <th>Credentials</th>
+                                <th>Approval</th>
+                                <th>Account</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if doctors %}
+                            {% for d in doctors %}
+                            <tr>
+                                <td class="text-center text-muted">{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        {% if d.image %}
+                                        <img src="{{ d.image.url }}" alt="" class="user-avatar-list">
+                                        {% else %}
+                                        <div class="user-placeholder-list">{{ d.username|first|upper }}</div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="fw-bold">Dr. {{ d.name|default:d.username }}</div>
+                                            <div class="small text-muted">{{ d.email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="spec-pill">{{ d.specialization }}</span></td>
+                                <td>
+                                    <div class="fw-bold small">{{ d.qualification }}</div>
+                                    <div class="text-muted extra-small">{{ d.experience }} Experience</div>
+                                </td>
+                                <td>
+                                    {% if d.is_approved %}
+                                    <span class="text-success" title="Approved Profile"><i
+                                            class="fas fa-check-circle"></i></span>
+                                    {% else %}
+                                    <span class="text-warning" title="Pending Approval"><i
+                                            class="fas fa-clock"></i></span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if d.is_active %}
+                                    <span class="badge-status badge-active">Active</span>
+                                    {% else %}
+                                    <span class="badge-status badge-inactive">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <div class="action-btns justify-content-end">
+                                        <a href="/admins/toggle/{{ d.id }}/"
+                                            class="btn-ghost-bth btn-sm {% if d.is_active %}text-warning{% else %}text-success{% endif %}"
+                                            title="{% if d.is_active %}Deactivate Account{% else %}Activate Account{% endif %}">
+                                            {% if d.is_active %}<i class="fas fa-power-off"></i>{% else %}<i
+                                                class="fas fa-play"></i>{% endif %}
+                                        </a>
+                                        <a href="/admins/edit/{{ d.id }}/" class="btn-ghost-bth btn-sm text-primary"
+                                            title="Edit Doctor Profile">
+                                            <i class="fas fa-user-edit"></i>
+                                        </a>
+                                        <a href="/admins/delete/{{ d.id }}/" class="btn-ghost-bth btn-sm text-danger"
+                                            title="Remove Doctor"
+                                            onclick="return confirm('Remove Dr. {{ d.username }} from the system?')">
+                                            <i class="fas fa-user-minus"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fas fa-user-md-slash fa-3x mb-3 d-block"></i>
+                                    No doctors found. <a href="/admins/doctors/create" class="text-primary fw-bold">Add
+                                        the first one</a>.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const val = this.value.toLowerCase();
+        document.querySelectorAll('#doctorTable tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
+        });
+    });
+</script>
+{% include 'footer.html' %}

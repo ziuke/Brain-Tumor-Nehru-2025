@@ -1,212 +1,124 @@
 {% load static %}
 {% include 'header.html' %}
-{% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Form</title>
-    <style>
-        .reg-form input[type="text"], .reg-form input[type="email"], .reg-form input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
 
-        .reg-form label {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+<div class="auth-page">
+    <div class="auth-card">
 
-        .reg-form button[type="submit"] {
-            background-color: #2068a8;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-        }
+        <div class="auth-logo">BH</div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-sub">Join Brain Tumour Hub as a Patient</p>
+        <hr class="auth-divider">
 
-        .reg-form button[type="submit"]:hover {
-            background-color: #3c5973;
-        }
+        {% for message in messages %}
+        <div class="auth-msg auth-msg-error">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
 
-        .errorlist {
-            color: red;
-            font-size: 12px;
-            margin-top: 5px;
-        }
+        <form class="reg-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        .form-check input[type="checkbox"] {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            width: 15px;
-            height: 15px;
-            border: 2px solid black;
-            border-radius: 3px;
-            background-color: white;
-            cursor: pointer;
-        }
-
-        .form-check input[type="checkbox"]:checked {
-            background-color: rgb(75, 116, 228);
-        }
-
-        .form-check-label {
-            margin-left: 10px;
-            font-weight: bold;
-        }
-
-        .disease-box {
-            border: 2px solid rgb(29, 49, 198);
-            padding: 15px;
-            border-radius: 10px;
-            background-color: #fbfbff;
-            margin-bottom: 20px;
-        }
-
-        .disease-box label {
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <div class="banner-w3l-main">
-        <br>
-        <div class="container mt-5 mb-5">
-            <div class="row justify-content-center align-items-center min-vh-100">
-                <div class="col-lg-6 col-md-8 col-sm-12">
-                    <br><br><br><br>
-                    <div class="card p-4 shadow-sm">
-                        <div class="card-body">
-                            <h2 class="text-center mb-4"><b>Register</b></h2>
-
-                            <!-- Display global error/success messages -->
-                            {% if messages %}
-                                <div class="alert-container">
-                                    {% for message in messages %}
-                                        <div class="alert alert-{{ message.tags }}">
-                                            {{ message }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-
-                            <form class="reg-form" action="" method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                
-
-                                <!-- Render the form fields -->
-                                {% for field in form %}
-                                    <div class="form-group">
-                                        <label class="req-field" for="{{ field.auto_id }}">{{ field.label }}</label>
-
-                                        <!-- Special handling for country field (dropdown) -->
-                                        {% if field.name == "country" %}
-                                            {{ field }}
-                                            {% if field.errors %}
-                                                <ul class="errorlist">
-                                                    {% for error in field.errors %}
-                                                        <li>{{ error }}</li>
-                                                    {% endfor %}
-                                                </ul>
-                                            {% endif %}
-                                        {% elif field.name == "phone" %}
-                                            <div class="d-flex">
-                                                <div style="flex: 1; max-width: 20%; margin-right: 10px;">
-                                                    <input id="country_code" class="form-control" type="text" name="country_code" value="{{ form.country.value|default:'+91' }}" readonly />
-                                                </div>
-                                                <div style="flex: 4;">
-                                                    {{ field }}
-                                                </div>
-                                            </div>
-                                            {% if field.errors %}
-                                                <ul class="errorlist">
-                                                    {% for error in field.errors %}
-                                                        <li>{{ error }}</li>
-                                                    {% endfor %}
-                                                </ul>
-                                            {% endif %}
-                                        {% elif field.name == "disease" %}
-                                            <div class="disease-box">
-                                                <div class="form-group">
-                                                    <label for="id_disease">Disease</label>
-                                                    {% for checkbox in form.disease %}
-                                                        <div class="form-check">
-                                                            {{ checkbox }}
-                                                            <label class="form-check-label" for="{{ checkbox.id_for_label }}"></label>
-                                                        </div>
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-                                            {% if field.errors %}
-                                                <ul class="errorlist">
-                                                    {% for error in field.errors %}
-                                                        <li>{{ error }}</li>
-                                                    {% endfor %}
-                                                </ul>
-                                            {% endif %}
-                                        {% else %}
-                                            {{ field }}
-                                            {% if field.errors %}
-                                                <ul class="errorlist">
-                                                    {% for error in field.errors %}
-                                                        <li>{{ error }}</li>
-                                                    {% endfor %}
-                                                </ul>
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
-
-                                <button type="submit" class="btn-primary w-100">REGISTER</button>
-                            </form>
-                        </div>
-                    </div>
+            <div class="two-col">
+                <!-- Username -->
+                <div class="form-group-bth">
+                    <label for="{{ form.username.auto_id }}"><i class="fas fa-user me-1"></i>Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<ul class="errorlist">{% for e in form.username.errors %}<li>{{ e }}
+                        </li>{% endfor %}</ul>{% endif %}
+                </div>
+                <!-- Email -->
+                <div class="form-group-bth">
+                    <label for="{{ form.email.auto_id }}"><i class="fas fa-envelope me-1"></i>Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<ul class="errorlist">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
                 </div>
             </div>
-        </div>
+
+            <div class="two-col">
+                <!-- Phone -->
+                <div class="form-group-bth">
+                    <label for="{{ form.phone.auto_id }}"><i class="fas fa-phone me-1"></i>Phone</label>
+                    <div style="display:flex;gap:2px">
+                        <input id="country_code" type="text" name="country_code" value="+91" readonly>
+                        {{ form.phone }}
+                    </div>
+                    {% if form.phone.errors %}<ul class="errorlist">{% for e in form.phone.errors %}<li>{{ e }}</li>
+                        {% endfor %}</ul>{% endif %}
+                </div>
+                <!-- Place -->
+                <div class="form-group-bth">
+                    <label for="{{ form.place.auto_id }}"><i class="fas fa-map-marker-alt me-1"></i>Place</label>
+                    {{ form.place }}
+                    {% if form.place.errors %}<ul class="errorlist">{% for e in form.place.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+
+            <!-- Country -->
+            <div class="form-group-bth">
+                <label for="{{ form.country.auto_id }}"><i class="fas fa-globe me-1"></i>Country</label>
+                {{ form.country }}
+                {% if form.country.errors %}<ul class="errorlist">{% for e in form.country.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <!-- Profile Photo -->
+            <div class="form-group-bth">
+                <label><i class="fas fa-camera me-1"></i>Profile Photo (optional)</label>
+                <div class="file-upload-box">
+                    {{ form.image }}
+                    <p class="text-muted-bth" style="font-size:.82rem;margin:6px 0 0">Click to upload JPG / PNG</p>
+                </div>
+                {% if form.image.errors %}<ul class="errorlist">{% for e in form.image.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="two-col">
+                <!-- Password -->
+                <div class="form-group-bth">
+                    <label for="{{ form.password.auto_id }}"><i class="fas fa-lock me-1"></i>Password</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}<ul class="errorlist">{% for e in form.password.errors %}<li>{{ e }}
+                        </li>{% endfor %}</ul>{% endif %}
+                </div>
+                <!-- Confirm -->
+                <div class="form-group-bth">
+                    <label for="{{ form.confirm_password.auto_id }}"><i class="fas fa-lock me-1"></i>Confirm</label>
+                    {{ form.confirm_password }}
+                    {% if form.confirm_password.errors %}<ul class="errorlist">{% for e in form.confirm_password.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="auth-msg auth-msg-error">
+                {% for e in form.non_field_errors %}<p style="margin:0">{{ e }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn-primary-bth mt-2">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <p class="auth-footer">
+            Already have an account? <a class="auth-link" href="/login">Sign in</a>
+        </p>
     </div>
+</div>
 
-    <script>
-        // Map of country codes
-        const countryCodes = {
-            "Afghanistan": "+93",
-            "Armenia": "+374",
-            "Bahrain": "+973",
-            "Bangladesh": "+880",
-            "Bhutan": "+975",
-            "Cambodia": "+855",
-            "China": "+86",
-            "India": "+91",
-            "Japan": "+81",
-            "Malaysia": "+60",
-            "Turkey": "+90",
-            "Others": "+999"
-        };
-
-        // Event listener for country select
-        document.getElementById('country_select').addEventListener('change', function () {
-            const selectedCountryCode = this.value || '';
-            document.getElementById('country_code').value = selectedCountryCode;
+<script>
+    const countryCodes = {
+        "Afghanistan": "+93", "Armenia": "+374", "Bahrain": "+973", "Bangladesh": "+880",
+        "Bhutan": "+975", "Cambodia": "+855", "China": "+86", "India": "+91",
+        "Japan": "+81", "Malaysia": "+60", "Turkey": "+90", "Others": "+999"
+    };
+    const sel = document.getElementById('id_country') || document.getElementById('country');
+    if (sel) {
+        sel.addEventListener('change', function () {
+            const cc = document.getElementById('country_code');
+            if (cc) cc.value = countryCodes[this.value] || '+91';
         });
-
-        // Combine country code and phone number into the phone field before submission
-        document.querySelector('.reg-form').addEventListener('submit', function (e) {
-            const countryCode = document.getElementById('country_code').value;
-            const phoneField = document.querySelector('input[name="phone"]');
-            phoneField.value = countryCode + phoneField.value;  // Combine the country code and phone number
-        });
-    </script>
-
-    <script src="{% static 'js/script.js' %}"></script>
-</body>
-{% endblock %}
+    }
+</script>
 {% include 'footer.html' %}
